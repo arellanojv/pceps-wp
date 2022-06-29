@@ -81,7 +81,6 @@ function App() {
             </Routes>
             <Footer />
           </BrowserRouter>
-
           <Router primary={false}>
             <Account path='/account/*' />
           </Router>
