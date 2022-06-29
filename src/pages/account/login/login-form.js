@@ -1,16 +1,37 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 
-import { useAuth } from '../../../hooks'
+import Axios from 'axios'
+import DispatchContext from '../../../DispatchContext'
 import Page from '../../../components/Page'
 
 export const LoginForm = () => {
-  const [username, setUsername] = useState('')
+  const appDispatch = useContext(DispatchContext)
+  const [identifier, setIdentifier] = useState('')
   const [password, setPassword] = useState('')
-  const { login, error, status } = useAuth()
 
-  const onLogin = (e) => {
+  async function onLogin(e) {
     e.preventDefault()
-    login(username, password)
+    try {
+      const response = await Axios.post(
+        'http://localhost:1337/api/auth/local',
+        {
+          identifier,
+          password,
+        }
+      )
+      if (response.data) {
+        appDispatch({ type: 'login', data: response.data })
+        appDispatch({
+          type: 'flashMessage',
+          value: 'You have successfully logged in.',
+        })
+        console.log('User Data', response.data)
+      } else {
+        console.log('Incorrect username/password.')
+      }
+    } catch (e) {
+      console.log('there was a problem', e)
+    }
   }
 
   return (
@@ -23,16 +44,6 @@ export const LoginForm = () => {
             </h2>
           </div>
           <form onSubmit={onLogin} className='mt-8 space-y-6'>
-            {error && (
-              <div className='error-notice'>
-                <div
-                  className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative'
-                  role='alert'
-                >
-                  <span className='block sm:inline'>{error}</span>
-                </div>
-              </div>
-            )}
             <div className='rounded-md shadow-sm -space-y-px'>
               <div className='border-0'>
                 <div className='mb-6'>
@@ -43,11 +54,11 @@ export const LoginForm = () => {
                     Email or Username
                   </label>
                   <input
-                    onChange={(e) => setUsername(e.target.value)}
-                    id='username'
-                    name='username'
+                    onChange={(e) => setIdentifier(e.target.value)}
+                    id='identifier'
+                    name='identifier'
                     type='text'
-                    autoComplete='username'
+                    autoComplete='identifier'
                     className='border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
                     placeholder='you@example.com'
                   />
