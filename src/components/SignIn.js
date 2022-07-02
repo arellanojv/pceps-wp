@@ -1,42 +1,45 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Page from './Page'
+import { useMutation, gql } from '@apollo/client'
 import Axios from 'axios'
+import { useAuth } from '../hooks'
+
 function SignIn(props) {
   const [identifier, setIdentifier] = useState()
   const [password, setPassword] = useState()
+  const { login, error, status } = useAuth()
 
-  async function handleSubmit(e) {
+  function handleSubmit(e) {
     e.preventDefault()
-
-    // await Axios.post('http://localhost:1337/api/auth/local/', {
-    //   data: { identifier: 'test@test.com', password: 'Password' },
-    // })
-    //   .then((response) => {
-    //     console.log('User profile', response.data.user)
-    //     console.log('User token', response.data.jwt)
-    //   })
-    //   .catch((error) => {
-    //     console.log('An error occurred:', error.response)
-    //   })
-    try {
-      const response = await Axios.post(
-        'http://localhost:1337/api/auth/local',
-        {
-          identifier,
-          password,
-        }
-      )
-      if (response.data) {
-        localStorage.setItem('pcepsToken', response.data.jwt)
-        localStorage.setItem('pcepsUsername', response.data.user.username)
-      } else {
-        console.log('Incorrect username/password.')
-      }
-    } catch (e) {
-      console.log('there was a problem', e)
-    }
+    login(identifier, password)
   }
+
+  // console.log('LOGIN DATA', login)
+  // console.log('LOGIN Error', error)
+  console.log('LOGIN Status', status)
+  console.log('LOGIN', login)
+
+  // async function handleSubmit(e) {
+  //   e.preventDefault()
+  //   try {
+  //     const response = await Axios.post(
+  //       'http://localhost:1337/api/auth/local',
+  //       {
+  //         identifier,
+  //         password,
+  //       }
+  //     )
+  //     if (response.data) {
+  //       localStorage.setItem('pcepsToken', response.data.jwt)
+  //       localStorage.setItem('pcepsUsername', response.data.user.username)
+  //     } else {
+  //       console.log('Incorrect username/password.')
+  //     }
+  //   } catch (e) {
+  //     console.log('there was a problem')
+  //   }
+  // }
 
   return (
     <Page title='Sign In'>

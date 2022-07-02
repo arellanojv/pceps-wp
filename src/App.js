@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 import { useImmerReducer } from 'use-immer'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
@@ -41,7 +41,6 @@ function App() {
     switch (action.type) {
       case 'login':
         draft.loggedIn = true
-        draft.user = action.data
         return
       case 'logout':
         draft.loggedIn = false
@@ -53,40 +52,35 @@ function App() {
   }
   const [state, dispatch] = useImmerReducer(ourReducer, initialState)
 
-  useEffect(() => {
-    if (state.loggedIn) {
-      localStorage.setItem('pcepsToken', state.user.jwt)
-      localStorage.setItem('pcepsUsername', state.user.user.username)
-    } else {
-      localStorage.removeItem('pcepsToken')
-      localStorage.removeItem('complexappUsername')
-    }
-  }, [state.loggedIn])
-
   return (
-    <StateContext.Provider value={state}>
-      <DispatchContext.Provider value={dispatch}>
-        <ApolloProvider client={client}>
-          <BrowserRouter>
-            <Header />
-            <Routes>
-              <Route path='/' element={<HomeGuest />} />
-              <Route element={<ProtectedRoutes />}>
-                <Route path='/app' element={<Dashboard />} />
-                <Route path='/create-purchase-request' element={<CreatePr />} />
-              </Route>
-              <Route path='/privacy-policy' element={<PrivacyPolicy />} />
-              <Route path='/signup' element={<SignUp />} />
-              <Route path='/signin' element={<SignIn />} />
-            </Routes>
-            <Footer />
-          </BrowserRouter>
-          <Router primary={false}>
-            <Account path='/account/*' />
-          </Router>
-        </ApolloProvider>
-      </DispatchContext.Provider>
-    </StateContext.Provider>
+    <AuthContextProvider>
+      <StateContext.Provider value={state}>
+        <DispatchContext.Provider value={dispatch}>
+          <ApolloProvider client={client}>
+            <BrowserRouter>
+              <Header />
+              <Routes>
+                <Route path='/' element={<HomeGuest />} />
+                <Route element={<ProtectedRoutes />}>
+                  <Route path='/app' element={<Dashboard />} />
+                  <Route
+                    path='/create-purchase-request'
+                    element={<CreatePr />}
+                  />
+                </Route>
+                <Route path='/privacy-policy' element={<PrivacyPolicy />} />
+                <Route path='/signup' element={<SignUp />} />
+                <Route path='/signin' element={<SignIn />} />
+              </Routes>
+            </BrowserRouter>
+            <Router primary={false}>
+              <Account path='/account/*' />
+            </Router>
+          </ApolloProvider>
+          <Footer />
+        </DispatchContext.Provider>
+      </StateContext.Provider>
+    </AuthContextProvider>
   )
 }
 

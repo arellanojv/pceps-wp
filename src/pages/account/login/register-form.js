@@ -123,11 +123,11 @@ export const RegisterForm = () => {
                     type='radio'
                     value='buyer'
                     name='inline-radio-group'
-                    class='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
+                    class='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500'
                   />
                   <label
                     for='inline-radio'
-                    class='ml-2 text-sm font-medium text-gray-900 dark:text-gray-300'
+                    class='ml-2 text-sm font-medium text-gray-900'
                   >
                     Buyer
                   </label>
@@ -139,11 +139,11 @@ export const RegisterForm = () => {
                     type='radio'
                     value='provider'
                     name='inline-radio-group'
-                    class='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
+                    class='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500'
                   />
                   <label
                     for='inline-2-radio'
-                    class='ml-2 text-sm font-medium text-gray-900 dark:text-gray-300'
+                    class='ml-2 text-sm font-medium text-gray-900'
                   >
                     Provider
                   </label>
