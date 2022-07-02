@@ -1,4 +1,12 @@
+import { useAuth } from '../../../hooks'
+
 export const Profile = () => {
+  const { viewer, loadingViewer, logout } = useAuth()
+
+  if (loadingViewer || !viewer) {
+    return <h1>Loading user profile...</h1>
+  }
+
   return (
     <div className='profile'>
       <hgroup>
@@ -6,7 +14,10 @@ export const Profile = () => {
         <div>
           <p>
             Edit your account details below, or{' '}
-            <button className='link-button'>sign out here</button>.
+            <button onClick={logout} className='link-button'>
+              sign out here
+            </button>
+            .
           </p>
         </div>
       </hgroup>

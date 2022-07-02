@@ -1,16 +1,14 @@
-import React, { useContext } from 'react'
 import { Router } from '@reach/router'
 
-import StateContext from '../../StateContext'
-
+import { useAuth } from '../../hooks'
 import Profile from './profile'
 import Login from './login'
 import NotFound from '../../pages/not-found'
 
 const Account = () => {
-  const appState = useContext(StateContext)
-  const ViewComponent = appState.loggedIn ? Profile : Login
-
+  const { isLoggedIn } = useAuth()
+  const ViewComponent = isLoggedIn ? Profile : Login
+  console.log('ISLOOGEDIN?', isLoggedIn)
   return (
     <Router>
       <NotFound default />
