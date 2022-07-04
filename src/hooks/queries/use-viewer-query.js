@@ -7,6 +7,12 @@ import { useSafeDispatch } from '../use-safe-dispatch'
 const VIEWER = gql`
   query viewer {
     viewer {
+      accounts {
+        nodes {
+          businessInfoSubmitted
+          accountStatus
+        }
+      }
       id
       email
       username

@@ -7,7 +7,6 @@ import Page from '../../../components/Page'
 export const RegisterForm = () => {
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
-  const [role, setRole] = useState('')
   const [password, setPassword] = useState('')
   const { register, error, status } = useRegistration()
   const [passwordError, setPasswordError] = useState('')
@@ -27,7 +26,7 @@ export const RegisterForm = () => {
       setPasswordError('Please enter a password.')
       return
     }
-    register(username, email, password, role)
+    register(username, email, password)
   }
 
   return (
@@ -104,49 +103,6 @@ export const RegisterForm = () => {
                     className='border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
                     placeholder='Your password'
                   />
-                </div>
-              </div>
-            </div>
-
-            <div className='mb-6'>
-              <label
-                htmlFor='email'
-                className='block mb-2 text-sm font-medium text-gray-900'
-              >
-                Service Role
-              </label>{' '}
-              <div class='flex'>
-                <div class='flex items-center mr-4'>
-                  <input
-                    onChange={(e) => setRole(e.target.value)}
-                    id='inline-radio'
-                    type='radio'
-                    value='buyer'
-                    name='inline-radio-group'
-                    class='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500'
-                  />
-                  <label
-                    for='inline-radio'
-                    class='ml-2 text-sm font-medium text-gray-900'
-                  >
-                    Buyer
-                  </label>
-                </div>
-                <div class='flex items-center mr-4'>
-                  <input
-                    onChange={(e) => setRole(e.target.value)}
-                    id='inline-2-radio'
-                    type='radio'
-                    value='provider'
-                    name='inline-radio-group'
-                    class='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500'
-                  />
-                  <label
-                    for='inline-2-radio'
-                    class='ml-2 text-sm font-medium text-gray-900'
-                  >
-                    Provider
-                  </label>
                 </div>
               </div>
             </div>
