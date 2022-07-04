@@ -30,10 +30,10 @@ export const useRegistration = () => {
   const { registerMutation } = useRegisterMutation()
   const { setIsLoggedIn } = useAuthContext()
 
-  const register = (username, email, password, role) => {
+  const register = (username, email, password) => {
     setError(null)
     setStatus('resolving')
-    return registerMutation(username, email, password, role)
+    return registerMutation(username, email, password)
       .then(() => {
         setIsLoggedIn(true)
         setStatus('resolved')
