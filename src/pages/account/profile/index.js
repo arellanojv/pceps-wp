@@ -1,14 +1,70 @@
+import React, { useState, useEffect } from 'react'
 import { useAuth } from '../../../hooks'
+
+import {
+  regions,
+  provinces,
+  cities,
+  barangays,
+} from 'select-philippines-address'
 
 export const Profile = () => {
   const { viewer, loadingViewer, logout } = useAuth()
+
+  const [regionData, setRegion] = useState([])
+  const [provinceData, setProvince] = useState([])
+  const [cityData, setCity] = useState([])
+  const [barangayData, setBarangay] = useState([])
+
+  const [regionAddr, setRegionAddr] = useState('')
+  const [provinceAddr, setProvinceAddr] = useState('')
+  const [cityAddr, setCityAddr] = useState('')
+  const [barangayAddr, setBarangayAddr] = useState('')
 
   if (loadingViewer || !viewer) {
     return <h1>Loading user profile...</h1>
   }
 
-  console.log('Viewer Data:', viewer)
-  console.log('Data:', viewer.accounts.nodes[0].accountStatus)
+  const region = () => {
+    regions().then((response) => {
+      setRegion(response)
+    })
+  }
+
+  const province = (e) => {
+    setRegionAddr(e.target.selectedOptions[0].text)
+    provinces(e.target.value).then((response) => {
+      setProvince(response)
+      setCity([])
+      setBarangay([])
+    })
+  }
+
+  const city = (e) => {
+    setProvinceAddr(e.target.selectedOptions[0].text)
+    cities(e.target.value).then((response) => {
+      setCity(response)
+    })
+  }
+
+  const barangay = (e) => {
+    setCityAddr(e.target.selectedOptions[0].text)
+    barangays(e.target.value).then((response) => {
+      setBarangay(response)
+    })
+  }
+
+  const brgy = (e) => {
+    setBarangayAddr(e.target.selectedOptions[0].text)
+  }
+
+  // console.log('Viewer Data:', viewer)
+  // console.log('Data:', viewer.accounts.nodes[0].accountStatus)
+  // useEffect(() => {
+  //   region()
+  // }, [])
+
+  region()
 
   return (
     <div className='profile'>
@@ -27,14 +83,15 @@ export const Profile = () => {
       {/* <ProfileForm viewer={ viewer } /> */}
 
       {/* Top Navigation */}
-      <div className='max-w-3xl mx-auto px-4 py-10'>
+
+      <div className='max-w-3xl mx-auto'>
         <div className='border-b-2 py-4'>
           <div className='uppercase tracking-wide text-xs font-bold text-gray-500 mb-1 leading-tight'></div>
           <div className='flex flex-col md:flex-row md:items-center md:justify-between'>
             <div className='flex-1'>
               <div x-show='step === 1'>
                 <div className='text-lg font-bold text-gray-700 leading-tight'>
-                  Your Profile
+                  Business Information
                 </div>
               </div>
             </div>
@@ -51,304 +108,359 @@ export const Profile = () => {
           </div>
         </div>
 
-        <div className='py-10'>
-          <div>
-            <div className='mb-5'>
-              <label for='email' className='font-bold mb-1 text-gray-700 block'>
-                Service role
-              </label>
-              <div className='flex'>
-                <label className='flex justify-start items-center text-truncate rounded-lg bg-white pl-4 pr-6 py-3 shadow-sm mr-4'>
-                  <div className='text-teal-600 mr-3'>
-                    <input
-                      type='radio'
-                      x-model='gender'
-                      value='buyer'
-                      name='serviceRole'
-                      className='form-radio focus:outline-none focus:shadow-outline'
-                    />
+        <div className='flex-1'>
+          <main>
+            <div className=''>
+              <div>
+                <div className='md:grid'>
+                  {/* <div className='md:col-span-1'>
+                    <div className='px-4 sm:px-0'>
+                      <h3 className='text-lg font-medium leading-6 text-gray-900'>
+                        Purchase Request Details
+                      </h3>
+                      <p className='mt-1 text-sm text-gray-600'>
+                        Please be specific on what you need
+                      </p>
+                    </div>
+                  </div> */}
+
+                  <div className='mt-5 md:mt-0 md:col-span-2'>
+                    <form action='#' method='POST'>
+                      <div className='shadow sm:rounded-md sm:overflow-hidden'>
+                        <div className='px-4 py-5 bg-white sm:p-6'>
+                          <div className='grid grid-cols-6 gap-6'>
+                            <div className='col-span-6 sm:col-span-3'>
+                              <label
+                                htmlFor='title'
+                                className='block text-sm font-medium text-gray-700'
+                              >
+                                First name
+                              </label>
+                              <input
+                                type='text'
+                                name='firstname'
+                                id='firstname'
+                                placeholder='Enter your first name'
+                                autoComplete='given-name'
+                                className='mt-1 focus:ring-orange-400 focus:border-orange-400 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                              />
+                            </div>
+
+                            <div className='col-span-6 sm:col-span-3'>
+                              <label
+                                htmlFor='title'
+                                className='block text-sm font-medium text-gray-700'
+                              >
+                                Last name
+                              </label>
+                              <input
+                                type='text'
+                                name='lastname'
+                                id='lastname'
+                                placeholder='Enter your last name'
+                                autoComplete='given-name'
+                                className='mt-1 focus:ring-orange-400 focus:border-orange-400 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                              />
+                            </div>
+
+                            <div className='col-span-6'>
+                              <label
+                                htmlFor='price'
+                                className='block text-sm font-medium text-gray-700'
+                              >
+                                Date of birth
+                              </label>
+                              <div className='relative'>
+                                <input
+                                  type='date'
+                                  name='dateOfBirth'
+                                  placeholder='mm/dd/yyyy'
+                                  className='mt-1 focus:ring-orange-400 focus:border-orange-400 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                                />
+                              </div>
+                            </div>
+
+                            <div className='col-span-6'>
+                              <label
+                                htmlFor='title'
+                                className='block text-sm font-medium text-gray-700'
+                              >
+                                Street address
+                              </label>
+                              <input
+                                type='text'
+                                name='streetAdress'
+                                id='streetAdress'
+                                placeholder='Enter your street adress'
+                                autoComplete='given-name'
+                                className='mt-1 focus:ring-orange-400 focus:border-orange-400 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                              />
+                            </div>
+
+                            <div className='col-span-6 sm:col-span-6 lg:col-span-2'>
+                              <label
+                                htmlFor='category'
+                                className='block text-sm font-medium text-gray-700'
+                              >
+                                Region
+                              </label>
+                              <select
+                                id='category'
+                                name='category'
+                                onChange={province}
+                                onSelect={region}
+                                autoComplete='category'
+                                className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-400 focus:border-orange-400 sm:text-sm'
+                              >
+                                <option disabled>Select Region</option>
+                                {regionData &&
+                                  regionData.length > 0 &&
+                                  regionData.map((item) => (
+                                    <option
+                                      key={item.region_code}
+                                      value={item.region_code}
+                                    >
+                                      {item.region_name}
+                                    </option>
+                                  ))}
+                              </select>
+                            </div>
+
+                            <div className='col-span-6 sm:col-span-6 lg:col-span-2'>
+                              <label
+                                htmlFor='province'
+                                className='block text-sm font-medium text-gray-700'
+                              >
+                                Province
+                              </label>
+                              <select
+                                id='province'
+                                name='province'
+                                onChange={city}
+                                autoComplete='province'
+                                className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-400 focus:border-orange-400 sm:text-sm'
+                              >
+                                <option disabled>Select Province</option>
+                                {provinceData &&
+                                  provinceData.length > 0 &&
+                                  provinceData.map((item) => (
+                                    <option
+                                      key={item.province_code}
+                                      value={item.province_code}
+                                    >
+                                      {item.province_name}
+                                    </option>
+                                  ))}
+                              </select>
+                            </div>
+
+                            <div className='col-span-6 sm:col-span-6 lg:col-span-2'>
+                              <label
+                                htmlFor='city'
+                                className='block text-sm font-medium text-gray-700'
+                              >
+                                City
+                              </label>
+                              <select
+                                id='city'
+                                name='city'
+                                onChange={barangay}
+                                autoComplete='city'
+                                className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-400 focus:border-orange-400 sm:text-sm'
+                              >
+                                <option disabled>Select City</option>
+                                {cityData &&
+                                  cityData.length > 0 &&
+                                  cityData.map((item) => (
+                                    <option
+                                      key={item.city_code}
+                                      value={item.city_code}
+                                    >
+                                      {item.city_name}
+                                    </option>
+                                  ))}
+                              </select>
+                            </div>
+
+                            <div className='col-span-6 sm:col-span-6 lg:col-span-2'>
+                              <label
+                                htmlFor='barangay'
+                                className='block text-sm font-medium text-gray-700'
+                              >
+                                Barngay
+                              </label>
+                              <select
+                                id='barangay'
+                                name='barangay'
+                                onChange={brgy}
+                                autoComplete='barangay'
+                                className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-400 focus:border-orange-400 sm:text-sm'
+                              >
+                                <option disabled>Select Barangay</option>
+                                {barangayData &&
+                                  barangayData.length > 0 &&
+                                  barangayData.map((item) => (
+                                    <option
+                                      key={item.brgy_code}
+                                      value={item.brgy_code}
+                                    >
+                                      {item.brgy_name}
+                                    </option>
+                                  ))}
+                              </select>
+                            </div>
+
+                            <div className='col-span-6 sm:col-span-3 lg:col-span-2'>
+                              <label
+                                htmlFor='postal-code'
+                                className='block text-sm font-medium text-gray-700'
+                              >
+                                ZIP / Postal code
+                              </label>
+                              <input
+                                type='text'
+                                name='postal-code'
+                                id='postal-code'
+                                autoComplete='postal-code'
+                                className='mt-1 focus:ring-orange-400 focus:border-orange-400 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                              />
+                            </div>
+
+                            <div className='col-span-6'>
+                              <label
+                                htmlFor='description'
+                                className='block text-sm font-medium text-gray-700'
+                              >
+                                Full address
+                              </label>
+                              <div className='mt-1'>
+                                <textarea
+                                  id='address'
+                                  name='address'
+                                  rows={4}
+                                  className='shadow-sm focus:ring-orange-400 focus:border-orange-400 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md'
+                                  placeholder='Your full address'
+                                  defaultValue={
+                                    (barangayAddr,
+                                    cityAddr,
+                                    provinceAddr,
+                                    regionAddr)
+                                  }
+                                />
+                              </div>
+                            </div>
+
+                            <div className='col-span-6 sm:col-span-3'>
+                              <label
+                                htmlFor='category'
+                                className='block text-sm font-medium text-gray-700'
+                              >
+                                Category
+                              </label>
+                              <select
+                                id='category'
+                                name='category'
+                                autoComplete='category'
+                                className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-400 focus:border-orange-400 sm:text-sm'
+                              >
+                                <option value=''>Please Select</option>
+                                <option>Agriculture</option>
+                                <option>Construction Mats</option>
+                                <option>Office Supplies</option>
+                                <option>Mechanical</option>
+                                <option>Electrical</option>
+                                <option>Plumbing</option>
+                                <option>Fire Protection</option>
+                                <option>CCTV / Security</option>
+                              </select>
+                            </div>
+
+                            <div className='col-span-6 sm:col-span-3'>
+                              <label
+                                htmlFor='budget'
+                                className='block text-sm font-medium text-gray-700'
+                              >
+                                Budget
+                              </label>
+                              <div className='mt-1 relative rounded-md shadow-sm'>
+                                <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                                  <span className='text-gray-500 sm:text-sm'>
+                                    P
+                                  </span>
+                                </div>
+                                <input
+                                  type='text'
+                                  name='budget'
+                                  id='budget'
+                                  className='focus:ring-orange-400 focus:border-orange-400 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md'
+                                  placeholder='0.00'
+                                />
+                                <div className='absolute inset-y-0 right-0 flex items-center'>
+                                  <label htmlFor='currency' className='sr-only'>
+                                    Currency
+                                  </label>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className='col-span-6'>
+                              <label className='block text-sm font-medium text-gray-700'>
+                                Files / Photos
+                              </label>
+                              <div className='mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md'>
+                                <div className='space-y-1 text-center'>
+                                  <svg
+                                    className='mx-auto h-12 w-12 text-gray-400'
+                                    stroke='currentColor'
+                                    fill='none'
+                                    viewBox='0 0 48 48'
+                                    aria-hidden='true'
+                                  >
+                                    <path
+                                      d='M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02'
+                                      strokeWidth={2}
+                                      strokeLinecap='round'
+                                      strokeLinejoin='round'
+                                    />
+                                  </svg>
+                                  <div className='flex text-sm text-gray-600'>
+                                    <label
+                                      htmlFor='file-upload'
+                                      className='relative cursor-pointer bg-white rounded-md font-medium text-orange-500 hover:text-orange-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-orange-500'
+                                    >
+                                      <span>Upload a file</span>
+                                      <input
+                                        id='file-upload'
+                                        name='file-upload'
+                                        type='file'
+                                        className='sr-only'
+                                      />
+                                    </label>
+                                    <p className='pl-1'>or drag and drop</p>
+                                  </div>
+                                  <p className='text-xs text-gray-500'>
+                                    PNG, JPG, GIF up to 10MB
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className='px-4 py-3 bg-gray-50 text-right sm:px-6'>
+                          <button
+                            type='submit'
+                            className='inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500'
+                          >
+                            Save
+                          </button>
+                        </div>
+                      </div>
+                    </form>
                   </div>
-                  <div className='select-none text-gray-700'>Buyer</div>
-                </label>
-
-                <label className='flex justify-start items-center text-truncate rounded-lg bg-white pl-4 pr-6 py-3 shadow-sm'>
-                  <div className='text-teal-600 mr-3'>
-                    <input
-                      type='radio'
-                      x-model='gender'
-                      value='provider'
-                      name='serviceRole'
-                      className='form-radio focus:outline-none focus:shadow-outline'
-                    />
-                  </div>
-                  <div className='select-none text-gray-700'>Provider</div>
-                </label>
-              </div>
-            </div>
-
-            <div className='mb-5'>
-              <label for='email' className='font-bold mb-1 text-gray-700 block'>
-                Business type
-              </label>
-              <div className='flex'>
-                <label className='flex justify-start items-center text-truncate rounded-lg bg-white pl-4 pr-6 py-3 shadow-sm mr-4'>
-                  <div className='text-teal-600 mr-3'>
-                    <input
-                      type='radio'
-                      x-model='gender'
-                      value='corporation'
-                      name='businessType'
-                      className='form-radio focus:outline-none focus:shadow-outline'
-                    />
-                  </div>
-                  <div className='select-none text-gray-700'>Corporation</div>
-                </label>
-
-                <label className='flex justify-start items-center text-truncate rounded-lg bg-white pl-4 pr-6 py-3 shadow-sm mr-4'>
-                  <div className='text-teal-600 mr-3'>
-                    <input
-                      type='radio'
-                      x-model='gender'
-                      value='soleProprietorship'
-                      name='businessType'
-                      className='form-radio focus:outline-none focus:shadow-outline'
-                    />
-                  </div>
-                  <div className='select-none text-gray-700'>
-                    Sole proprietorship
-                  </div>
-                </label>
-
-                <label className='flex justify-start items-center text-truncate rounded-lg bg-white pl-4 pr-6 py-3 shadow-sm mr-4'>
-                  <div className='text-teal-600 mr-3'>
-                    <input
-                      type='radio'
-                      x-model='gender'
-                      value='individual'
-                      name='businessType'
-                      className='form-radio focus:outline-none focus:shadow-outline'
-                    />
-                  </div>
-                  <div className='select-none text-gray-700'>Individual</div>
-                </label>
-
-                <label className='flex justify-start items-center text-truncate rounded-lg bg-white pl-4 pr-6 py-3 shadow-sm'>
-                  <div className='text-teal-600 mr-3'>
-                    <input
-                      type='radio'
-                      x-model='gender'
-                      value='partnership'
-                      name='businessType'
-                      className='form-radio focus:outline-none focus:shadow-outline'
-                    />
-                  </div>
-                  <div className='select-none text-gray-700'>Partnership</div>
-                </label>
-              </div>
-            </div>
-
-            <div className='mb-5'>
-              <label
-                for='profession'
-                className='font-bold mb-1 text-gray-700 block'
-              >
-                Profession
-              </label>
-              <input
-                type='profession'
-                className='w-full px-4 py-3 rounded-lg shadow-sm focus:outline-none focus:shadow-outline text-gray-600 font-medium'
-                placeholder='eg. Web Developer'
-              />
-            </div>
-          </div>
-          <div>
-            <div className='mb-5 text-center'>
-              <div className='mx-auto w-32 h-32 mb-2 border rounded-full relative bg-gray-100 mb-4 shadow-inset'>
-                <img
-                  id='image'
-                  className='object-cover w-full h-32 rounded-full'
-                  src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/4QBCRXhpZgAATU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAkAAAAMAAAABAAAAAEABAAEAAAABAAAAAAAAAAAAAP/bAEMACwkJBwkJBwkJCQkLCQkJCQkJCwkLCwwLCwsMDRAMEQ4NDgwSGRIlGh0lHRkfHCkpFiU3NTYaKjI+LSkwGTshE//bAEMBBwgICwkLFQsLFSwdGR0sLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLP/AABEIAdoB2gMBIgACEQEDEQH/xAAfAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgv/xAC1EAACAQMDAgQDBQUEBAAAAX0BAgMABBEFEiExQQYTUWEHInEUMoGRoQgjQrHBFVLR8CQzYnKCCQoWFxgZGiUmJygpKjQ1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4eLj5OXm5+jp6vHy8/T19vf4+fr/xAAfAQADAQEBAQEBAQEBAAAAAAAAAQIDBAUGBwgJCgv/xAC1EQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/APTmZsnmk3N60N1NJTELub1o3N60lFAC7m9aNzetJRQAu5vWjc3rSUUALub1o3N60lFAC7m9aNzetJRQAu5vWjc3rSUUALub1o3N60lFAC7m9aNzetJRQAu5vWjc3rSUUALub1o3N60lFAC7m9aNzetJRQAu5vWjc3rSUUALub1o3N60lFAC7m9aNzetJRQAu5vWjc3rSUUALub1o3N60lFAC7m9aNzetJRQAu5vWjc3rSUUALub1o3N60lFAC7m9aNzetJRQAu5vWjc3rSUUALub1o3N60lJQA7c3rSbm9aSigBdzetG4+tJRQAZPrRuPrSUUALub1/lRub1pKSgBdzUbm9aSigBdzetG5vX+VJSUALub1/lUu5qhqXj1oAG6mkpW6mkoAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooASiiigAooooAKSiigAooo+lACUZoooAKKKSgAo/rRSUALUlRVJz60AObqaSlbqaSgAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACkoooAKKKKACiikoAKSlooASiiigA+lHpRQaACkoooATmilpPegBP/ANdS5HrUdSfL7UAObqaSlbqaSgAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKSiigAooooAKKKKAEooooASij60UAFFFHpQAUmaKPxoAKSlpPWgA/wAmk/pS/Sk47dqADpUvPvUXrUn4H8qAHt1NJSt1NJQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFISFBJIAHUk4FAC0VTlv4EyEBc+3C/nVSS9uX6MEHonX8zQBrEqvLEAe5A/nUTXVqvWVfwyf5VjFmY5Ykn3JP86SmBrG/tB3c/RTTf7QtvST8hWXRQBqi/te+8f8AAc09by0b/loB/vAiseigDeV43+66t9CDTq5/p04+lTJdXMfSQkej/MP1oA2qKoR6gpwJUK/7Scj8utXEkjkG5GDD2P8AMUgH0UUUAFFFJQAUUUUAFFFJQAtJRRQAUlFFABR2oo+lAB1pKKP60AFFFFACUHjNH/66KAEpaSj/APVQAc0/I9KZUufpQA5uppKVuppKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACimsyopZiAo5JNZlxePLlI8rH0J/ib60AWp72KLKph3/wDHR9TWdLNNMcuxPoOij6Co6KYBRRRQAUUUUAFFFFABRRRQAUUUUAFKruhDIxUjuDikooA0IL/os4/4Gv8AUVfBVgCpBB6Ecg1gVLBcSwH5eUP3lPQ/SgDaoqOKaOZdyH/eB6qfepKQBRRRQAlFFFABSUUUAFFFFABRRSf5NABxR6e1FJQAcUUUnP6UALSf5/GjvRz+FAB06d6KT6UGgA96kyf8mo//ANdP59P1oAlbqaSlbqaSgAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACmu6RqzucKvJNKSACScADJJ7Csi6uDO2BkRqflHr7mgBLi5edu4QH5V/qagoopgFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFACUUUUAPjkkiYOhwR+RHoa14J0nTI4YffX0NYtPileJ1dDyOoPQj0NAG7SUyKVJkDr36juD6U+kAUhoooAKKKKACij/JpKACj/PNFFABScUelFACUdqP8mj+dABn9KMjij60d+tACf5FH5Uf59qOOlACfhUn40zmn4oAlbqaSlbqaSgAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKhuJhDEz/xfdQerGgCpfXGT5CHgf6w+/8AdqhQSSSScknJPqTRTAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACkoooAKKKKACiiigCe2nMEnP+rbhx6e9bHoQevT3zXP1p2M+9DE33k5X/AHf/AK1AF2koNFIAoopKAFpKKPSgApPX0pf8mkoAKKTPP1paAE+lFFIT/ntQAelHAoz0oz/hQAd6T155oooAKk2+wqLPt/8AWqTj1P5GgCZuppKVuppKACiiigAooooAKKKKACiiigAooooAKKKKACiiigArJvpd8uwH5Y+P+BHrWnK4jjkc/wAKkj69qwiSSSepJJ+ppgFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABSUUUAFFFFABRRSUAFFFFABT4pDFIkg/hPPuO4plFAG8CGAYchgCD7HmlqpYy74dp6xnH4HkVapALSUUUAH+NFFJQAc0f5+tHFJQAUUUepoAP/r0nP/1sUH1ozQAUnOaPwo9OlAAcd6T60tJQAHn+lSZPotR/55qTJ/yKAJm6mkpW6mkoAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAKWoPiNE/vtk/RazKt6g2Zgv9xB+Z5qpTAKKKKACiiigAooooAKKKKACiiigAooooAKKKSgAooooAKKKSgBaSiigAooooAKKKSgC3YPtmKdpFI/EcitSsOJiksTejr+Wa3PSgAoo/zzSflSAWkNBo/nQAlH9aPr60envQAf5NJS0noaADNFH+fYUH/61ACUetFJnGaADg//AK6O/NJ6fhRz0PrQAH/CpefVfzqI46ZNS8UATN1NJSt1NJQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAYt0d1xOf9rA/AYqGnzHMsx/6aP/ADplMAooooAKKKKACiiigAooooAKKKKACiikoAKKKKACiikoAWkoo4oAKKKKACiikoAKWkooAOa3UOUjb1VT+lYVbUB/cwHuY1JoAkz+dGTR2pP5UgAn+lFFHNABSfjzS0nFABn2+lFFIfQj6UAB6c0elH+eKT/JoAPU/wD6qOaPUe1HpQAho+tHXp+lJ/8AqoAOPXrT8H0H50z/ADxUmT6n9KALDdTSUrdTSUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAGFL/AK2b/ro/8zTKluBiecf7Z/XmoqYBRRRQAUUUUAFFFFABRRRQAUUUUAJRRRQAUUUUAFJRRQAUUUUAFFFJQAtJRRQAUUUUAFbUH+og/wCua/yrFrbjGI4h6Io/SgB/NJR60H2pAB/Wj0o5ooATPSjj/P8A9ej/APVSelACn/PrSccYo/z/APXpPf8A/VQAo9KSg9OfX+VHIoAOo7/1pp/P0+lO/Wm8/wD6qAD07dfxo4/Wj9fekyOp/wAigBc9fqKk/Koj39sVLlvf9KALDdTSUrdTSUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAGRfLtuGP95Vb9MVWrQ1FP9TJ9UP8xWfTAKKKKACiiigAooooAKKKKACkoooAKKKKACkpaSgAooooAKKKKACkpaSgAooo5oAKKKSgByjcyL6sAPxrcHHHoMYrJs033Ef+zlz+HStf1xQAn+eKPSj/AD9aPxxSAQ8UUUnrzQAtJn6UZP8An2o5/wA+9ACHt+dHPt3/AP1Uen8qM/rQAZ/wpP8APt60f55o5/rmgA9+1J680fyo7mgBD+H0o6Z4o9/T60UAJz05p/Pv+dM/PnGKk59BQBabqaSlbqaSgAooooAKKKKACiiigAooooAKKKKACiiigAooooAguo/MgkUdQNy/Veaxq6CsS5i8qZ1/hJ3L9DTAiooooAKKKKACiiigApKWkoAKKKKACiikoAKKKKACiiigApKWkoAKKKKACiikoAKKKACSoHUkAY96ANDT0wskh/iIUfQcmr3/AOumRRiKNIx/CBn3PenfmaQC+lFJzzQe/wCtAB/k0nX8fSlJpBgcfj+FABRwfw6Un+TRnt+dAB9KT1xR24+uaKAA/wD6/ek6c0fnzQeP55oAPekOf896OOvPTrR+VABwTgen60hwADRS/T8KAEPJ+vTNSc+v8qj5/wAfwqTP0/OgC03U0lK3U0lABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAVUvofMj3qPnjyfqverdFAHP0VYuoDDIcD92+Snt6iq9MAooooAKKKSgAooooAKKKSgAooooAKKKPagAoopKAFpKKKACiiigApKKKACrljFucyt0ThfdqqojSOqJ1Y4+nqa2Y0WNFReijH196AHUpopO34UgD/J5pP1o/w/Wj+tAAcfnzR/hRz9fSk4/wA/yFAB/k0Z46/Wjpn+tJ+NAAT3P6daT/PtS+tJQAd/0o5pOuOaO340AH+Tn1pAf8il9c+lJQAdPWjn/D2oP4e9Hp9PxoATPNSc+g/Sou3SpMD0NAFxuppKVuppKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAjmiSZGRu/IPofWsWSN4nZHGCP19xW9Ve5t1nXsJF+639DQBj0UrKyMysCGBwQabTAKKKKACiiigAopKKACiiigAopKKACiiigAoopKACiiigAzR1xjJNFaNpa7MSyj5uqKf4c9z70ASWlv5K7m/1jdf9kelWT3o/E/Wk/pSAPr6/wA6P50cGk6ZoAP0/Gj/APXRQf8AOKAEx9Pzo59f/r0HH5f1pP6UALx1FJ6cjPOfx7Ufp/jRx6/0oATnijpx+VGc/SkOefT8qAD+p9aD+uaOnNJj88/hQAuaT+lHrzSe/Hv3oAWkyP8APFGeg7d8Un/6qAD8sfrTvl9f1FN6YH6U/j0P5UAXW6mkpW6mkoAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAguLZJ154cD5W/oayJIpImKOMHt6EeoNbtMkijlUq6gjt6g+oNAGFRVqezliyyZdOvH3h9RVWmAUlLSUAFFFFABRRRQAUlLSUAFFFFABRRSUAH+RQASQACWPAAHJNSw280x+VcL3Y9K04beKAZHL92P8qAIba0EeHlwXHReoX/AOvVz/Cj0opAJz+dH+FH5/Wk9f8AOKAD9P1o9f60c8Z70Z+lACUfnRRxx+vtQAnr/Wg5/wA9qP8AHvRxj86AE9M96Mn8aOOlJ/8Aq9aAD1/TPWk649sUvfr/AIUnH9KADP6Uf40H/wDX60c/l1oAOvpR/h+FJke/40nPHtn60AGee31NJ6+/tS8dun9fxpOOmPcUAL/hUmR/tfrUJ7/zNSZb1P50AXm6mkpW6mkoAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigApKKKACiiigAqvNaQS5ONr/3k/qKsUlAGTLZXEedo3qO69fxFViCDgggjseDW/THjikGHRW+o5/OmBhUVqPYW7fdLp9DkfkahbTn/AIJQf94Y/lQBQoq2bC5GeYz9G/8ArUn2G69F/wC+hQBVoq0LG6PUIPq3+FPGnyn70iD6ZNAFKk/nWmunwjG93b8lFWEggj+5GoPTJGT+ZoAyo7a4kxtQhfVuBV2KxiTBkO8+nRfyq37Ht0ooAOAMDoPQYx9KKOn6UnFIAoo/z+dHagA4pMf5NFHagA+h59KTtR36fjRkc+tAB60n8/8APpSikJFACc+/09qPp75o/wA+oo4zQAZ6+vv/ACpOOPz/ABo6ZyaQ9vb0oAM9vzo/CjPtR2/oaAA496ODx7c0h9+9HJx70AJ3+lHHTP8A9ej8MUnHFAB3o54AoPP50h9fc8UAH+NScev+fzqPp/SpMH/P/wCugC83U0lK3U0lABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUlLSUAFFNeSOMbnYKPfv9BVKXUByIUz/tP/QUAX/X0qB7q2jyC4J9E5P6cVlSTzy/fckenQfkKjpgaJ1FMjETbe5JGfyqzHPBN9xxn0PDfkaxKP8AIoA3/wDPNFY8d3cx4G/cPR+f1q0mop/y0jI91Of0NIC9RUC3dq3/AC0A9mBFSh425DKfoRQA6ko560c+9ABSetLzTSyrncyj6kD+dAC9sUVC1zbLnMi/hz/KoGv4QPkVmPv8ooAuU15I4wS7Ko9zyfwrMkvrh+m1B/s8n8zVYlmOWYknuTk/rTA0X1CINhEZl7nO3P0FPS9tn6sUP+0OD26isqigDdBBGVIOeRtIP8qM9P8A9dYaO8ZJRmU/7JIq1HfyLxIoceo4b/CgDSIpOc1HFPDL9x8nH3Tww/CpM89KQBn/AOtQaT3/ADo/+vQAetJxijPWjigA6fypOOKO3PP1oPTr1zxQAf070np/n9aOaXuaAE4/+tR9Ov8AKg5PNJ+npQAHr/nmk4wc/wD6qMZ/z+NHH6fjQAentR/n2NJ+P/66P69qAD1H696THI+lH40hP+fagBeff2471Jg+pqI+nPT6VJuj9/zNAF9uppKVuppKACiiigAooooAKKKKACiiigAooooAKKKKACkpaimnigXLnk/dUdTQBISqgkkADqTwKoT34GVgGT/fbp+AqpPcSzn5jheyjoKhpgOd3clnYs3qabRSUALSUUUAFFFFABSUtJQAUf59KKKAFDOOAzD8TS+ZL/z0f/vo02koAcXfuzfmTTevX9aKSgBaKPak9KACg0UUAFJRn/69H/1qAA0UH0pKAAZByOCPTircN9ImFly6+v8AEKqHJzRQBtJIki7oyGH6j6in5/8Ar1iJJJG25GII/I/hWjb3SS4DfLJ6HofcUgLPpSZ/z9aX1/XNJ6+npQAcY/Sj29vyo65/SjnP+eKAG/y/WjrS/wCfzo/+tQAn+FJ3x3o6f56UUAJyM8cUUuP8OvakNAB/+qk70ev50maAF5603PtS55Ppn1oPqfWgBOOn40/n0P6VHk8D396mx9aAL7dTSUrdTSUAFFFFABRRRQAUUUUAFFFFABRRRQAUUVXubhYF4wZG+4P6mgAublYBgYMh+6vp7msh3eRi7klj1J/kKGZnYsxJYnJJptMAooooASiiigAo9KKKACiiigBKKKKACiiigApKWkoAKSlooAKTpRRQAUlLSUAFHeik4oAOaKP5Uf8A1qACkooOaACjODkH6e1Ic0UAaFtdlsRyn5sYVvX0Bq7nH096wsjmtC1ut+IZD83ARj3HoaALnXpQCcUfyo5+n+NIBOmaQ85pc89PxpPc8Dt/jQAh7evb8KU+tGevToTSenp3oAD9f/rUe3NJxkf5zR+PpigA57DnFJij6+lB9fWgAJFNPt/9elOfr/8AXpOP6e1AC+n+f1p2D/kmmf0/lUv4f5/KgDQbqaSlbqaSgAooooAKKKKACiiigAooooAKKKT1z2oAjmlSFGdu3AH94+lY0kjyOzuclj+XsKlupzNIcH92nCD196r0wCiiigAopKKACiiigAooooAKSiigAooooAKKKSgAo/z+NFFACcUUUUAFFFJQAUZoozQAlH50c0cUAFFFIfp/9agAo4oooASiiigBPTAoyfp3H/1qP8/nRQBqWtwJV2Mf3i9f9oetT8n61io7RsrqeVPHv7VsRyLIodeh5we3saAHd+Pxo9/84pOOv6mjn8+lIA9/zNJ69aX+VJ6e3WgA6elJye1LwfWkoAMdf0pD29s80uTjGfzpM57UAH8vz/Sk+oo/zn/61J0/GgBe4x6fp9Kkz7fpUf8An8aftP8AkigDSbqaSlbqaSgAooooAKKKKACiiigAooooAKpX0+xBEp+aTr7L/wDXq4SACTwACT9BWHNIZZHkPc8D0UdBQBHRRRTAKSiigAooooAKKKKACkoooAKKKKACkpaSgAoozRQAUUnPNFAB+dFFFABxSc0UUAJn9KKKOlABR/Wj/P1pOKACijmkoAKKKKAE/OjFFHGcUAHr+VHvRxSH2oAP8irVnNsfyz91zgZ7NVWjv+ORz0oA3OvUe4pPzqKGQSxK38XRvqOKk/8A1c+9IA9O3+e9HXjPP6UmeaD6CgAJ6Y9eaD0/mc0f5/Cm/wCf/r0AL+FJ/P8AzxR/niloAT/PsPaj+XbP+NHXP6UnX/69AB/Xr/OpMH3pnHv2qTn1P50AaLdTSUrdTSUAFFFFABRRRQAUUUUAFJRRQBUv5dkQQfekOP8AgI5NZVWb2TfOw7RgIPr3qtTAKKKSgAooooAKKKKACiikoAKKKKACiikoAWkoooAKSiloAT/PFFFFACf4UUdaM0AHY0nPY0UUAFFFJxxigAo/Gj+tFABSZoooAPcelFJ/+ujigA/yaKP88UGgBKPxo96KAEo7/jR3o70AW7GTDmPPDjI/3hWgTWKrbGVx/CQfy7VsghgpHQgE/jQAdf0zQf8AH86D+ntScc+nvSAPrnmj9P8A69JnpQM8fXJ7UAH+foaT29sClPXjHvSf4d6ADPtRkdPxpe3Xt9KT06ewoAOKlwPX9Ki44H4c80/H+cUAabdTSUrdTSUAFFFFABRRRQAUlLSUAFNdgiO56Kpb8hTqrXzbbdx3cqv9aAMgkkknqSSfx5oopKYC0lFFABRRRQAUlFFABRRRQAUUfhRQAUlHJooAPSkpe1JQAp/CkoNFABSUv1pKADpR60UlABx+dFFH6igBKWjmkoAKSlzmkoAM/wCelHpSUc8+9AB+NH+FFBoAM8dKb29+tLnvR/P1oAPWk/OjvRzxQAUUUnH60AHr6Vp2jhoQCTlMr/Wsw1csW5lT1Ab8uKAL3H4dKKP/ANXSjpn260gE7+vejijB/L9KTjII/wAmgBfek+n4fWl5GaD7flQAh9c59MUUcD+VH+cCgA7HH59qlyfb8jUX0HfvzzT+f7woA026mkpW6mkoAKKKKACiikoAKKKKACqGotxCnqWY/hxV+svUT+9Qekf8yaAKdJRRTAKKKKACkpaKAEooooAKKKKACkoooAKOwopPWgA/yKOKKKACkoo9f60AFJS5P+FJ6UAFHNFFABSUUUAGetBopPqaAD+fajrSZoPNAAf84oo9aOcf56UAHce1JzQeM0fSgA9aP85pP8KKAD0o49KKKAEzSelLmkzQAtTWhxOvuGX9M1BT4TtlhP8Atr+pxQBr/nxRzjJ/Gl56elJzxk0gE9Mk0vTuOf1o/wAf880fLQAnXp0/w9KPx9qP8k0f1zQAfjwKPbtzQPp/9ek49eOc0AGfY5Gafg+tMz7egp+1ff8AMUwNRuppKVuppKQBRRSUAFFFFABRRSUALWTf/wCv/wCALWrWVf8A+v8A+ALTAqUUUUAFFFJQAUUUUAHeiiigApKKPxoAPrRRRQAUlFHFAB/+rmg0UlAAaM0dDSfTpQAGiiigA4pKWkFAAaOaDSdqAD0ozR3pKACiiigA9Pb1pPalNJQAUZ+lJRQAGiij/wCv7UABpPWgnv0ooAPxpKKOmRQAdv8AGlj/ANZH/vr/ADpvH9adH/rI/wDfX+dAG0SMnpSY9KM/oaDn8/TikAeuPoaTH55OaOO1HPv/AI0AJ07Dpz6Gl9Pf+tJ0zx1/l1pc8fTpQAn+B5o9Onf15o5wT24zSHpwPwFMA44qTLepph/w+lPw3oaANRuppKVuppKQBSUUUAFFFFABSUUUAFZV/wD8fH/AFrVrJv8A/X/8AWmBVpKWkoAWkoooAKKKKACiikoAKKKDQAUlHtRQAUUUlAAaKPxpKAA0dOlFFABR/Sk5zR/KgBaSiigApO9FH+fxoAP8aPSk6+1J+NAC9x/n86M/5FH50lABRRSUALSUe/p60UAH86TP5UUmaAD0xRR/n6Uf5NAB70UUn/66ADinR/6yP/fU/rTeP8M0sf34+f41/nQBtZ/w/wDrc0nXsPwo/wAg0HvmkAen40Z70n6Z6fj2oIH59aAF70nP4Uf4YoPtxn9KYCc8eoxilznPWj+dJQAdR04NSZPoPzqOpMf5xSA1G6mm05upptABRRRQAUlLSUAFFFFACVlX/wDr/wDgC1q1lX/+v/4AtMCpRRRQAUUUUAFFFJQAUUUUAFJS0lABSUvpSUALSUUE+1ACUUfrRQAetJS0lAC5pP1oooASij2o9fc0AFH0pPT/ADmigAz9cUetHf8ADtSGgAycmjp/hR/+uj60AJR3oo+negAo6UnvRntQAGk9aX86SgAP40nFL+PekoAPX9KKPWk/yaAFpY/vx/768/jSUsePMj9d6/qaANk55+tH8v5UYoHT3HOD70gD/HvSf5/+tR6j19aOP8DTAOMd6Dx0+n/1qP8AI/nQe/tQAdO/5dqSl7Hpn3pPXikAemPp3qbI9aiHWpcD1NAGi3U0lS+n0H8qKAIqKk7UUARUVJQO9AEX+eKKlPb6UnYUAR1lX/8Ar+f7i1telZF//rx/uL/WmBRoqT/61JQAyipP/r0nc/57UAMpKkPf8KO5oAjop56Cg/0oAjop9Hp+FADKSnnrRQAyk61Ieg/Gjt+NAEdH+RUh6fjSDtQAz+dJ0qQ9/wDPakPSgBhpKlPT/PpSHvQBHzSf4mn+v4UGgBnej/PNSdjSdj9BQBH/AIUU80H7v5UAMpDUn9360Dv/AJ70AR/l0o9aef6UD/GgCPij+dSDr+dIe9AEdIal7fjTfX6UAMoz+dOPT8aWgBn+NJUvp+NN/wABQAzmnJ9+P/eX+dKO9SR/6yH/AHx/MUAanH+fekzUnYfSl9f8+lICLj+lH/6/6VKf4P8Ad/wpq/dpgM/Cgc9e2akPf/dpO/4D+YpAM6//AF+v5UZPH+cVJ3/E0rd/+BUAQ89fQcj2qXn1/nR3j+lNPVvqaAP/2Q==',"
-                />
-              </div>
-
-              <label
-                for='fileInput'
-                type='button'
-                className='cursor-pointer inine-flex justify-between items-center focus:outline-none border py-2 px-4 rounded-lg shadow-sm text-left text-gray-600 bg-white hover:bg-gray-100 font-medium'
-              >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  className='inline-flex flex-shrink-0 w-6 h-6 -mt-1 mr-1'
-                  viewBox='0 0 24 24'
-                  stroke-width='2'
-                  stroke='currentColor'
-                  fill='none'
-                  stroke-linecap='round'
-                  stroke-linejoin='round'
-                >
-                  <rect x='0' y='0' width='24' height='24' stroke='none'></rect>
-                  <path d='M5 7h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2' />
-                  <circle cx='12' cy='13' r='3' />
-                </svg>
-                Browse Photo
-              </label>
-
-              <div className='mx-auto w-48 text-gray-500 text-xs text-center mt-1'>
-                Click to add profile picture
-              </div>
-
-              <input
-                name='photo'
-                id='fileInput'
-                accept='image/*'
-                className='hidden'
-                type='file'
-              />
-            </div>
-
-            <div className='mb-5'>
-              <label
-                for='firstname'
-                className='font-bold mb-1 text-gray-700 block'
-              >
-                Firstname
-              </label>
-              <input
-                type='text'
-                className='w-full px-4 py-3 rounded-lg shadow-sm focus:outline-none focus:shadow-outline text-gray-600 font-medium'
-                placeholder='Enter your firstname...'
-              />
-            </div>
-
-            <div className='mb-5'>
-              <label for='email' className='font-bold mb-1 text-gray-700 block'>
-                Email
-              </label>
-              <input
-                type='email'
-                className='w-full px-4 py-3 rounded-lg shadow-sm focus:outline-none focus:shadow-outline text-gray-600 font-medium'
-                placeholder='Enter your email address...'
-              />
-            </div>
-          </div>
-          <div>
-            <div className='mb-5'>
-              <label
-                for='password'
-                className='font-bold mb-1 text-gray-700 block'
-              >
-                Set up password
-              </label>
-              <div className='text-gray-600 mt-2 mb-4'>
-                Please create a secure password including the following criteria
-                below.
-                <ul className='list-disc text-sm ml-4 mt-2'>
-                  <li>lowercase letters</li>
-                  <li>numbers</li>
-                  <li>capital letters</li>
-                  <li>special characters</li>
-                </ul>
-              </div>
-
-              <div className='relative'>
-                <input
-                  x-model='password'
-                  className='w-full px-4 py-3 rounded-lg shadow-sm focus:outline-none focus:shadow-outline text-gray-600 font-medium'
-                  placeholder='Your strong password...'
-                />
-
-                <div className='absolute right-0 bottom-0 top-0 px-3 py-3 cursor-pointer'>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    className='w-6 h-6 fill-current text-gray-500'
-                    viewBox='0 0 24 24'
-                  >
-                    <path d='M12 19c.946 0 1.81-.103 2.598-.281l-1.757-1.757C12.568 16.983 12.291 17 12 17c-5.351 0-7.424-3.846-7.926-5 .204-.47.674-1.381 1.508-2.297L4.184 8.305c-1.538 1.667-2.121 3.346-2.132 3.379-.069.205-.069.428 0 .633C2.073 12.383 4.367 19 12 19zM12 5c-1.837 0-3.346.396-4.604.981L3.707 2.293 2.293 3.707l18 18 1.414-1.414-3.319-3.319c2.614-1.951 3.547-4.615 3.561-4.657.069-.205.069-.428 0-.633C21.927 11.617 19.633 5 12 5zM16.972 15.558l-2.28-2.28C14.882 12.888 15 12.459 15 12c0-1.641-1.359-3-3-3-.459 0-.888.118-1.277.309L8.915 7.501C9.796 7.193 10.814 7 12 7c5.351 0 7.424 3.846 7.926 5C19.624 12.692 18.76 14.342 16.972 15.558z' />
-                  </svg>
-
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    className='w-6 h-6 fill-current text-gray-500'
-                    viewBox='0 0 24 24'
-                  >
-                    <path d='M12,9c-1.642,0-3,1.359-3,3c0,1.642,1.358,3,3,3c1.641,0,3-1.358,3-3C15,10.359,13.641,9,12,9z' />
-                    <path d='M12,5c-7.633,0-9.927,6.617-9.948,6.684L1.946,12l0.105,0.316C2.073,12.383,4.367,19,12,19s9.927-6.617,9.948-6.684 L22.054,12l-0.105-0.316C21.927,11.617,19.633,5,12,5z M12,17c-5.351,0-7.424-3.846-7.926-5C4.578,10.842,6.652,7,12,7 c5.351,0,7.424,3.846,7.926,5C19.422,13.158,17.348,17,12,17z' />
-                  </svg>
                 </div>
               </div>
-
-              <div className='flex items-center mt-4 h-3'>
-                <div className='w-2/3 flex justify-between h-2'>
-                  <div className='h-2 rounded-full mr-1 w-1/3 bg-gray-300'></div>
-                  <div className='h-2 rounded-full mr-1 w-1/3 bg-gray-300'></div>
-                  <div className='h-2 rounded-full w-1/3 bg-gray-300'></div>
-                </div>
-                <div
-                  x-text='passwordStrengthText'
-                  className='text-gray-500 font-medium text-sm ml-3 leading-none'
-                ></div>
-              </div>
-
-              <p className='mt-5 text-gray-600'>
-                Inspired from dribbble shot: Exploration for a password strength
-                meter by{' '}
-                <a
-                  href='https://dribbble.com/OvertonGraphics'
-                  className='text-blue-500'
-                >
-                  Josh Overton
-                </a>
-                .
-              </p>
             </div>
-          </div>
-          <div>
-            <div className='mb-5'>
-              <label for='email' className='font-bold mb-1 text-gray-700 block'>
-                Gender
-              </label>
-
-              <div className='flex'>
-                <label className='flex justify-start items-center text-truncate rounded-lg bg-white pl-4 pr-6 py-3 shadow-sm mr-4'>
-                  <div className='text-teal-600 mr-3'>
-                    <input
-                      type='radio'
-                      x-model='gender'
-                      value='Male'
-                      className='form-radio focus:outline-none focus:shadow-outline'
-                    />
-                  </div>
-                  <div className='select-none text-gray-700'>Male</div>
-                </label>
-
-                <label className='flex justify-start items-center text-truncate rounded-lg bg-white pl-4 pr-6 py-3 shadow-sm'>
-                  <div className='text-teal-600 mr-3'>
-                    <input
-                      type='radio'
-                      x-model='gender'
-                      value='Female'
-                      className='form-radio focus:outline-none focus:shadow-outline'
-                    />
-                  </div>
-                  <div className='select-none text-gray-700'>Female</div>
-                </label>
-              </div>
-            </div>
-
-            <div className='mb-5'>
-              <label
-                for='profession'
-                className='font-bold mb-1 text-gray-700 block'
-              >
-                Profession
-              </label>
-              <input
-                type='profession'
-                className='w-full px-4 py-3 rounded-lg shadow-sm focus:outline-none focus:shadow-outline text-gray-600 font-medium'
-                placeholder='eg. Web Developer'
-              />
-            </div>
-          </div>
+          </main>
         </div>
 
         {/* <div className='bg-white rounded-lg p-10 flex items-center shadow justify-between'>

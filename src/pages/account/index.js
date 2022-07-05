@@ -7,7 +7,8 @@ import NotFound from '../../pages/not-found'
 
 const Account = () => {
   const { isLoggedIn } = useAuth()
-  const ViewComponent = isLoggedIn ? Profile : Login
+  // const ViewComponent = isLoggedIn ? Profile : Login
+  const ViewComponent = Profile
   console.log('ISLOOGEDIN?', isLoggedIn)
   return (
     <Router>
