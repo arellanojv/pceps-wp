@@ -7,6 +7,7 @@ import { useSafeDispatch } from '../use-safe-dispatch'
 const VIEWER = gql`
   query viewer {
     viewer {
+      jwtAuthToken
       accounts {
         nodes {
           businessInfoSubmitted
