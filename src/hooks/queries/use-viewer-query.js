@@ -8,18 +8,28 @@ const VIEWER = gql`
   query viewer {
     viewer {
       jwtAuthToken
-      accounts {
-        nodes {
-          businessInfoSubmitted
-          accountStatus
-        }
-      }
       id
       email
       username
     }
   }
 `
+// const VIEWER = gql`
+//   query viewer {
+//     viewer {
+//       jwtAuthToken
+//       accounts {
+//         nodes {
+//           businessInfoSubmitted
+//           accountStatus
+//         }
+//       }
+//       id
+//       email
+//       username
+//     }
+//   }
+// `
 export const useViewerQuery = () => {
   const { setIsLoggedIn, isLoggedIn } = useAuthContext()
 
