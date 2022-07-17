@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../../../hooks'
+import Axios from 'axios'
 
 import {
   regions,
@@ -7,6 +8,7 @@ import {
   cities,
   barangays,
 } from 'select-philippines-address'
+import AccountInformationForm from './account-information-form'
 
 export const Profile = () => {
   const { viewer, loadingViewer, logout } = useAuth()
@@ -71,6 +73,35 @@ export const Profile = () => {
   console.log('Repeating')
   // region()
 
+  async function handleSubmit(e) {
+    e.preventDefault()
+    try {
+      const response = await Axios.post(
+        'http://localhost:10026/wp-json/wp/v2/users/me',
+        {
+          acf: {
+            business_type: 'corporation',
+            representatives_information: {
+              first_name: 'Jah4n From React App 3',
+              last_name: 'Yeah boi',
+              line_1: 'Liloan',
+              region: 'VII',
+            },
+          },
+        },
+        {
+          auth: {
+            username: 'developer',
+            password: 'sJz1 wy6e jel5 J6CG gLlt 86mn',
+          },
+        }
+      )
+      console.log('TEST Save', response)
+    } catch (e) {
+      console.log('there was a problem')
+    }
+  }
+
   return (
     <div className='profile'>
       <hgroup>
@@ -88,7 +119,7 @@ export const Profile = () => {
       {/* <ProfileForm viewer={ viewer } /> */}
 
       {/* Top Navigation */}
-
+      <AccountInformationForm />
       <div className='max-w-3xl mx-auto'>
         <div className='border-b-2 py-4'>
           <div className='uppercase tracking-wide text-xs font-bold text-gray-500 mb-1 leading-tight'></div>
@@ -130,7 +161,7 @@ export const Profile = () => {
                   </div> */}
 
                   <div className='mt-5 md:mt-0 md:col-span-2'>
-                    <form action='#' method='POST'>
+                    <form onSubmit={handleSubmit}>
                       <div className='shadow sm:rounded-md sm:overflow-hidden'>
                         <div className='px-4 py-5 bg-white sm:p-6'>
                           <div className='grid grid-cols-6 gap-6'>
