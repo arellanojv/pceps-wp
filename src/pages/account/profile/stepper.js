@@ -15,7 +15,7 @@ const Stepper = ({ steps, currentStep }) => {
           ...newSteps[count],
           highlighted: true,
           selected: true,
-          completed: true,
+          completed: false,
         }
         count++
       }
