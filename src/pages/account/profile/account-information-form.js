@@ -12,7 +12,7 @@ const AccountInformationForm = () => {
   const [userData, setUserData] = useState('')
   const [finalData, setFinalData] = useState([])
 
-  const steps = ['Account Information', 'Personal Details', 'Complete']
+  const steps = ['Business Information', 'General Information', 'Complete']
 
   const displayStep = (step) => {
     switch (step) {
@@ -39,7 +39,7 @@ const AccountInformationForm = () => {
       <div className='container horizontal mt-5'>
         <Stepper steps={steps} currentStep={currentStep} />
 
-        <div className='my-10 p-10'>
+        <div className='my-10'>
           <StepperContext.Provider
             value={{ userData, setUserData, finalData, setFinalData }}
           >
