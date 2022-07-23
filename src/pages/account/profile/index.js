@@ -84,6 +84,7 @@ export const Profile = () => {
             representatives_information: {
               first_name: 'Jah4n From React App 3',
               last_name: 'Yeah boi',
+              date_of_birth: '2022-06-30',
               line_1: 'Liloan',
               region: 'VII',
             },

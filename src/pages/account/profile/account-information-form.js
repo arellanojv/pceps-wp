@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Axios from 'axios'
 import { StepperContext } from '../../../contexts/stepper-context'
 import Stepper from './stepper'
 import StepperControl from './stepper-control'
@@ -26,12 +27,50 @@ const AccountInformationForm = () => {
     }
   }
 
-  const handleClick = (direction) => {
+  const handleClick = async (direction) => {
     let newStep = currentStep
 
     direction === 'next' ? newStep++ : newStep--
 
     newStep > 0 && newStep <= steps.length && setCurrentStep(newStep)
+
+    console.log('My Steps', newStep)
+    if (newStep == 3) {
+      console.log('Data ready to submit')
+      console.log('First Name', userData['firstname'])
+
+      try {
+        const response = await Axios.post(
+          'http://localhost:10026/wp-json/wp/v2/users/me',
+          {
+            acf: {
+              business_type: 'corporation',
+              representatives_information: {
+                first_name: userData['firstname'],
+                last_name: 'Yeah boi z2',
+                date_of_birth: '2022-06-30',
+                street_address: 'Liloan',
+                region: '07',
+                province: '07',
+                city: '07',
+                barangay: '07',
+                zip: '07',
+                full_address: '07',
+              },
+            },
+          },
+          {
+            auth: {
+              username: 'developer',
+              password: 'sJz1 wy6e jel5 J6CG gLlt 86mn',
+            },
+          }
+        )
+        console.log('TEST Save', response)
+      } catch (e) {
+        console.log('there was a problem')
+      }
+    }
   }
 
   return (

@@ -226,19 +226,19 @@ export default function Account() {
                               className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-400 focus:border-orange-400 sm:text-sm'
                             >
                               <option disabled>Select Region</option>
-                              {userData['region'] && (
-                                <option defaultValue>{regionByCodeData}</option>
-                              )}
+                              {console.log('the data', userData['region'])}
                               {regionData &&
                                 regionData.length > 0 &&
-                                regionData.map((item) => (
-                                  <option
-                                    key={item.region_code}
-                                    value={item.region_code}
-                                  >
-                                    {item.region_name}
-                                  </option>
-                                ))}
+                                regionData.map((item) => {
+                                  return (
+                                    <option
+                                      key={item.region_code}
+                                      value={item.region_code}
+                                    >
+                                      {item.region_name}
+                                    </option>
+                                  )
+                                })}
                             </select>
                           </div>
 
