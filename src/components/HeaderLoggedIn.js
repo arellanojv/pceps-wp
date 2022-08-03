@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useContext } from 'react'
 import { Link } from 'react-router-dom'
-import DispatchContext from '../DispatchContext'
+import DispatchContext from '../contexts/DispatchContext'
 
 function HeaderLoggedIn(props) {
   const appDispatch = useContext(DispatchContext)

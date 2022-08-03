@@ -1,4 +1,4 @@
-import { Router } from '@reach/router'
+import { Router } from '@gatsbyjs/reach-router'
 
 import { useAuth } from '../../hooks'
 import Profile from './profile'

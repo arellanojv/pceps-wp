@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import Axios from 'axios'
+import { useForm } from 'react-hook-form'
+
 import { StepperContext } from '../../../contexts/stepper-context'
 import Stepper from './stepper'
 import StepperControl from './stepper-control'
@@ -9,6 +11,8 @@ import Final from './steps/final'
 import Payment from './steps/final'
 
 const AccountInformationForm = () => {
+  //Hook form
+
   const [currentStep, setCurrentStep] = useState(1)
   const [userData, setUserData] = useState('')
   const [finalData, setFinalData] = useState([])
@@ -36,7 +40,7 @@ const AccountInformationForm = () => {
 
     console.log('My Steps', newStep)
     if (newStep == 3) {
-      console.log('Data ready to submit')
+      console.log('Userdata show here', userData)
       console.log('First Name', userData['firstname'])
 
       try {
@@ -47,7 +51,7 @@ const AccountInformationForm = () => {
               business_type: 'corporation',
               representatives_information: {
                 first_name: userData['firstname'],
-                last_name: 'Yeah boi z2',
+                last_name: 'how to fix this?',
                 date_of_birth: '2022-06-30',
                 street_address: 'Liloan',
                 region: '07',
