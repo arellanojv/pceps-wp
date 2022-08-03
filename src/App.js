@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 import { useImmerReducer } from 'use-immer'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { Router } from '@reach/router'
+import { Router } from '@gatsbyjs/reach-router'
 
 import Logo from './assets/altafino.svg'
 import './app.styles.scss'
@@ -11,8 +11,8 @@ import './index.scss'
 // Hooks
 import { useAppApolloClient } from './hooks'
 
-import StateContext from './StateContext'
-import DispatchContext from './DispatchContext'
+import StateContext from './context/StateContext'
+import DispatchContext from './contexts/DispatchContext'
 import { AuthContextProvider } from './context'
 
 //My Components

@@ -1,5 +1,8 @@
 import React, { useContext, useState } from 'react'
+import { useImmerReducer } from 'use-immer'
 import { StepperContext } from '../../../../contexts/stepper-context'
+import StateContext from '../../../../context/StateContext'
+import DispatchContext from '../../../../contexts/DispatchContext'
 
 import {
   regions,
@@ -11,6 +14,8 @@ import {
 
 export default function Account() {
   const { userData, setUserData } = useContext(StepperContext)
+  const appState = useContext(StateContext)
+  const appDispatch = useContext(DispatchContext)
 
   const [regionData, setRegion] = useState([])
   const [regionByCodeData, setRegionByCode] = useState([])
@@ -23,6 +28,36 @@ export default function Account() {
   const [cityAddr, setCityAddr] = useState('')
   const [barangayAddr, setBarangayAddr] = useState('')
 
+  //Form validations
+  const originalState = {
+    firstname: {
+      value: '',
+      hasErrors: false,
+      message: '',
+    },
+  }
+
+  function ourReducer(draft, action) {
+    switch (action.type) {
+      case 'firstnameChange':
+        draft.firstname.hasErrors = false
+        draft.firstname.value = action.value
+
+        return
+      case 'firstnameRules':
+        if (!action.value.trim()) {
+          draft.firstname.hasErrors = true
+          draft.firstname.message = 'You must provide a title.'
+        }
+        return
+    }
+  }
+
+  const [state, dispatch] = useImmerReducer(ourReducer, originalState)
+
+  console.log('Original State Data', state)
+
+  //Address dropdown logic
   if (userData['region']) {
     regionByCode(userData['region']).then((region) =>
       setRegionByCode(region.region_name)
@@ -128,373 +163,380 @@ export default function Account() {
                   </div> */}
 
                 <div className='mt-5 md:mt-0 md:col-span-2'>
-                  <form>
-                    <div className='shadow sm:rounded-md sm:overflow-hidden'>
-                      <div className='px-4 py-5 bg-white sm:p-6'>
-                        <div className='grid grid-cols-6 gap-6'>
-                          <div className='col-span-6 sm:col-span-3'>
-                            <label
-                              htmlFor='title'
-                              className='block text-sm font-medium text-gray-700'
-                            >
-                              First name
-                            </label>
+                  <div className='sm:overflow-hidden'>
+                    <div className='px-4 py-5 bg-white sm:p-6'>
+                      <div className='grid grid-cols-6 gap-6'>
+                        <div className='col-span-6 sm:col-span-3'>
+                          <label
+                            htmlFor='title'
+                            className='block text-sm font-medium text-gray-700'
+                          >
+                            First name
+                          </label>
+                          <input
+                            onChange={(e) =>
+                              dispatch({
+                                type: 'firstnameChange',
+                                value: e.target.value,
+                              })
+                            }
+                            onBlur={(e) =>
+                              dispatch({
+                                type: 'firstnameRules',
+                                value: e.target.value,
+                              })
+                            }
+                            value={state.firstname.value}
+                            // value={userData['firstname'] || ''}
+                            type='text'
+                            name='firstname'
+                            id='firstname'
+                            placeholder='Enter your first name'
+                            autoComplete='off'
+                            className='mt-1 focus:ring-orange-400 focus:border-orange-400 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                          />
+                          {state.firstname.hasErrors && (
+                            <p className='peer-invalid:visible text-red-700 font-light sm:text-sm ml-1 border w-fit bg-red-100 p-2 rounded-md'>
+                              First name is required
+                            </p>
+                          )}
+                        </div>
+
+                        <div className='col-span-6 sm:col-span-3'>
+                          <label
+                            htmlFor='title'
+                            className='block text-sm font-medium text-gray-700'
+                          >
+                            Last name
+                          </label>
+                          <input
+                            onChange={handleChange}
+                            value={userData['lastname'] || ''}
+                            type='text'
+                            name='lastname'
+                            id='lastname'
+                            placeholder='Enter your last name'
+                            autoComplete='given-name'
+                            className='mt-1 focus:ring-orange-400 focus:border-orange-400 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                          />
+                        </div>
+
+                        <div className='col-span-6 sm:col-span-3'>
+                          <label
+                            htmlFor='price'
+                            className='block text-sm font-medium text-gray-700'
+                          >
+                            Date of birth
+                          </label>
+                          <div className='relative'>
                             <input
                               onChange={handleChange}
-                              value={userData['firstname'] || ''}
-                              type='text'
-                              name='firstname'
-                              id='firstname'
-                              placeholder='Enter your first name'
-                              autoComplete='given-name'
+                              value={userData['dateOfBirth'] || ''}
+                              type='date'
+                              name='dateOfBirth'
+                              placeholder='mm/dd/yyyy'
                               className='mt-1 focus:ring-orange-400 focus:border-orange-400 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
                             />
                           </div>
+                        </div>
 
-                          <div className='col-span-6 sm:col-span-3'>
-                            <label
-                              htmlFor='title'
-                              className='block text-sm font-medium text-gray-700'
-                            >
-                              Last name
-                            </label>
-                            <input
-                              onChange={handleChange}
-                              value={userData['lastname'] || ''}
-                              type='text'
-                              name='lastname'
-                              id='lastname'
-                              placeholder='Enter your last name'
-                              autoComplete='given-name'
-                              className='mt-1 focus:ring-orange-400 focus:border-orange-400 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                        <div className='col-span-6'>
+                          <label
+                            htmlFor='title'
+                            className='block text-sm font-medium text-gray-700'
+                          >
+                            Street address
+                          </label>
+                          <input
+                            onChange={handleChange}
+                            value={userData['streetAdress'] || ''}
+                            type='text'
+                            name='streetAdress'
+                            id='streetAdress'
+                            placeholder='Enter your street adress'
+                            autoComplete='given-name'
+                            className='mt-1 focus:ring-orange-400 focus:border-orange-400 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                          />
+                        </div>
+
+                        <div className='col-span-6 sm:col-span-6 lg:col-span-2'>
+                          <label
+                            htmlFor='region'
+                            className='block text-sm font-medium text-gray-700'
+                          >
+                            Region
+                          </label>
+                          <select
+                            id='region'
+                            name='region'
+                            onBlur={handleChange}
+                            onChange={province}
+                            onSelect={region}
+                            onClick={handleRegionDropdownClick}
+                            autoComplete='region'
+                            className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-400 focus:border-orange-400 sm:text-sm'
+                          >
+                            <option disabled>Select Region</option>
+                            {console.log('the data', userData['region'])}
+                            {regionData &&
+                              regionData.length > 0 &&
+                              regionData.map((item) => {
+                                return (
+                                  <option
+                                    key={item.region_code}
+                                    value={item.region_code}
+                                  >
+                                    {item.region_name}
+                                  </option>
+                                )
+                              })}
+                          </select>
+                        </div>
+
+                        <div className='col-span-6 sm:col-span-6 lg:col-span-2'>
+                          <label
+                            htmlFor='province'
+                            className='block text-sm font-medium text-gray-700'
+                          >
+                            Province
+                          </label>
+                          <select
+                            id='province'
+                            name='province'
+                            onChange={city}
+                            autoComplete='province'
+                            className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-400 focus:border-orange-400 sm:text-sm'
+                          >
+                            <option disabled>Select Province</option>
+                            {provinceData &&
+                              provinceData.length > 0 &&
+                              provinceData.map((item) => (
+                                <option
+                                  key={item.province_code}
+                                  value={item.province_code}
+                                >
+                                  {item.province_name}
+                                </option>
+                              ))}
+                          </select>
+                        </div>
+
+                        <div className='col-span-6 sm:col-span-6 lg:col-span-2'>
+                          <label
+                            htmlFor='city'
+                            className='block text-sm font-medium text-gray-700'
+                          >
+                            City
+                          </label>
+                          <select
+                            id='city'
+                            name='city'
+                            onChange={barangay}
+                            autoComplete='city'
+                            className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-400 focus:border-orange-400 sm:text-sm'
+                          >
+                            <option disabled>Select City</option>
+                            {cityData &&
+                              cityData.length > 0 &&
+                              cityData.map((item) => (
+                                <option
+                                  key={item.city_code}
+                                  value={item.city_code}
+                                >
+                                  {item.city_name}
+                                </option>
+                              ))}
+                          </select>
+                        </div>
+
+                        <div className='col-span-6 sm:col-span-6 lg:col-span-2'>
+                          <label
+                            htmlFor='barangay'
+                            className='block text-sm font-medium text-gray-700'
+                          >
+                            Barangay
+                          </label>
+                          <select
+                            id='barangay'
+                            name='barangay'
+                            onChange={brgy}
+                            autoComplete='barangay'
+                            className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-400 focus:border-orange-400 sm:text-sm'
+                          >
+                            <option disabled>Select Barangay</option>
+                            {barangayData &&
+                              barangayData.length > 0 &&
+                              barangayData.map((item) => (
+                                <option
+                                  key={item.brgy_code}
+                                  value={item.brgy_code}
+                                >
+                                  {item.brgy_name}
+                                </option>
+                              ))}
+                          </select>
+                        </div>
+
+                        <div className='col-span-6 sm:col-span-3 lg:col-span-2'>
+                          <label
+                            htmlFor='postal-code'
+                            className='block text-sm font-medium text-gray-700'
+                          >
+                            ZIP / Postal code
+                          </label>
+                          <input
+                            type='text'
+                            name='postal-code'
+                            id='postal-code'
+                            autoComplete='postal-code'
+                            className='mt-1 focus:ring-orange-400 focus:border-orange-400 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                          />
+                        </div>
+
+                        <div className='col-span-6'>
+                          <label
+                            htmlFor='description'
+                            className='block text-sm font-medium text-gray-700'
+                          >
+                            Full address
+                          </label>
+                          <div className='mt-1'>
+                            <textarea
+                              id='address'
+                              name='address'
+                              rows={4}
+                              className='shadow-sm focus:ring-orange-400 focus:border-orange-400 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md'
+                              placeholder='Your full address'
+                              defaultValue={
+                                (barangayAddr,
+                                cityAddr,
+                                provinceAddr,
+                                regionAddr)
+                              }
                             />
                           </div>
+                        </div>
 
-                          <div className='col-span-6 sm:col-span-3'>
+                        <div className='col-span-6'>
+                          <label
+                            htmlFor='description'
+                            className='block text-sm font-medium text-gray-700'
+                          >
+                            Are you a beneficial owner?
+                          </label>
+                          <div className='flex items-center mb-4'>
+                            <input
+                              id='areYouABeneficialOwner'
+                              type='checkbox'
+                              value=''
+                              className='w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
+                            />
                             <label
-                              htmlFor='price'
-                              className='block text-sm font-medium text-gray-700'
+                              htmlFor='areYouABeneficialOwner'
+                              className='ml-2 block text-sm font-medium text-gray-700'
                             >
-                              Date of birth
+                              Yes
                             </label>
-                            <div className='relative'>
-                              <input
-                                onChange={handleChange}
-                                value={userData['dateOfBirth'] || ''}
-                                type='date'
-                                name='dateOfBirth'
-                                placeholder='mm/dd/yyyy'
-                                className='mt-1 focus:ring-orange-400 focus:border-orange-400 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
-                              />
+                          </div>
+                        </div>
+
+                        <div className='col-span-6 sm:col-span-3'>
+                          <label
+                            htmlFor='category'
+                            className='block text-sm font-medium text-gray-700'
+                          >
+                            Category
+                          </label>
+                          <select
+                            id='category'
+                            name='category'
+                            autoComplete='category'
+                            className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-400 focus:border-orange-400 sm:text-sm'
+                          >
+                            <option value=''>Please Select</option>
+                            <option>Agriculture</option>
+                            <option>Construction Mats</option>
+                            <option>Office Supplies</option>
+                            <option>Mechanical</option>
+                            <option>Electrical</option>
+                            <option>Plumbing</option>
+                            <option>Fire Protection</option>
+                            <option>CCTV / Security</option>
+                          </select>
+                        </div>
+
+                        <div className='col-span-6 sm:col-span-3'>
+                          <label
+                            htmlFor='budget'
+                            className='block text-sm font-medium text-gray-700'
+                          >
+                            Budget
+                          </label>
+                          <div className='mt-1 relative rounded-md shadow-sm'>
+                            <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                              <span className='text-gray-500 sm:text-sm'>
+                                P
+                              </span>
                             </div>
-                          </div>
-
-                          <div className='col-span-6'>
-                            <label
-                              htmlFor='title'
-                              className='block text-sm font-medium text-gray-700'
-                            >
-                              Street address
-                            </label>
-                            <input
-                              onChange={handleChange}
-                              value={userData['streetAdress'] || ''}
-                              type='text'
-                              name='streetAdress'
-                              id='streetAdress'
-                              placeholder='Enter your street adress'
-                              autoComplete='given-name'
-                              className='mt-1 focus:ring-orange-400 focus:border-orange-400 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
-                            />
-                          </div>
-
-                          <div className='col-span-6 sm:col-span-6 lg:col-span-2'>
-                            <label
-                              htmlFor='region'
-                              className='block text-sm font-medium text-gray-700'
-                            >
-                              Region
-                            </label>
-                            <select
-                              id='region'
-                              name='region'
-                              onBlur={handleChange}
-                              onChange={province}
-                              onSelect={region}
-                              onClick={handleRegionDropdownClick}
-                              autoComplete='region'
-                              className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-400 focus:border-orange-400 sm:text-sm'
-                            >
-                              <option disabled>Select Region</option>
-                              {console.log('the data', userData['region'])}
-                              {regionData &&
-                                regionData.length > 0 &&
-                                regionData.map((item) => {
-                                  return (
-                                    <option
-                                      key={item.region_code}
-                                      value={item.region_code}
-                                    >
-                                      {item.region_name}
-                                    </option>
-                                  )
-                                })}
-                            </select>
-                          </div>
-
-                          <div className='col-span-6 sm:col-span-6 lg:col-span-2'>
-                            <label
-                              htmlFor='province'
-                              className='block text-sm font-medium text-gray-700'
-                            >
-                              Province
-                            </label>
-                            <select
-                              id='province'
-                              name='province'
-                              onChange={city}
-                              autoComplete='province'
-                              className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-400 focus:border-orange-400 sm:text-sm'
-                            >
-                              <option disabled>Select Province</option>
-                              {provinceData &&
-                                provinceData.length > 0 &&
-                                provinceData.map((item) => (
-                                  <option
-                                    key={item.province_code}
-                                    value={item.province_code}
-                                  >
-                                    {item.province_name}
-                                  </option>
-                                ))}
-                            </select>
-                          </div>
-
-                          <div className='col-span-6 sm:col-span-6 lg:col-span-2'>
-                            <label
-                              htmlFor='city'
-                              className='block text-sm font-medium text-gray-700'
-                            >
-                              City
-                            </label>
-                            <select
-                              id='city'
-                              name='city'
-                              onChange={barangay}
-                              autoComplete='city'
-                              className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-400 focus:border-orange-400 sm:text-sm'
-                            >
-                              <option disabled>Select City</option>
-                              {cityData &&
-                                cityData.length > 0 &&
-                                cityData.map((item) => (
-                                  <option
-                                    key={item.city_code}
-                                    value={item.city_code}
-                                  >
-                                    {item.city_name}
-                                  </option>
-                                ))}
-                            </select>
-                          </div>
-
-                          <div className='col-span-6 sm:col-span-6 lg:col-span-2'>
-                            <label
-                              htmlFor='barangay'
-                              className='block text-sm font-medium text-gray-700'
-                            >
-                              Barangay
-                            </label>
-                            <select
-                              id='barangay'
-                              name='barangay'
-                              onChange={brgy}
-                              autoComplete='barangay'
-                              className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-400 focus:border-orange-400 sm:text-sm'
-                            >
-                              <option disabled>Select Barangay</option>
-                              {barangayData &&
-                                barangayData.length > 0 &&
-                                barangayData.map((item) => (
-                                  <option
-                                    key={item.brgy_code}
-                                    value={item.brgy_code}
-                                  >
-                                    {item.brgy_name}
-                                  </option>
-                                ))}
-                            </select>
-                          </div>
-
-                          <div className='col-span-6 sm:col-span-3 lg:col-span-2'>
-                            <label
-                              htmlFor='postal-code'
-                              className='block text-sm font-medium text-gray-700'
-                            >
-                              ZIP / Postal code
-                            </label>
                             <input
                               type='text'
-                              name='postal-code'
-                              id='postal-code'
-                              autoComplete='postal-code'
-                              className='mt-1 focus:ring-orange-400 focus:border-orange-400 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                              name='budget'
+                              id='budget'
+                              className='focus:ring-orange-400 focus:border-orange-400 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md'
+                              placeholder='0.00'
                             />
-                          </div>
-
-                          <div className='col-span-6'>
-                            <label
-                              htmlFor='description'
-                              className='block text-sm font-medium text-gray-700'
-                            >
-                              Full address
-                            </label>
-                            <div className='mt-1'>
-                              <textarea
-                                id='address'
-                                name='address'
-                                rows={4}
-                                className='shadow-sm focus:ring-orange-400 focus:border-orange-400 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md'
-                                placeholder='Your full address'
-                                defaultValue={
-                                  (barangayAddr,
-                                  cityAddr,
-                                  provinceAddr,
-                                  regionAddr)
-                                }
-                              />
-                            </div>
-                          </div>
-
-                          <div className='col-span-6'>
-                            <label
-                              htmlFor='description'
-                              className='block text-sm font-medium text-gray-700'
-                            >
-                              Are you a beneficial owner?
-                            </label>
-                            <div className='flex items-center mb-4'>
-                              <input
-                                id='areYouABeneficialOwner'
-                                type='checkbox'
-                                value=''
-                                className='w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
-                              />
-                              <label
-                                htmlFor='areYouABeneficialOwner'
-                                className='ml-2 block text-sm font-medium text-gray-700'
-                              >
-                                Yes
+                            <div className='absolute inset-y-0 right-0 flex items-center'>
+                              <label htmlFor='currency' className='sr-only'>
+                                Currency
                               </label>
                             </div>
                           </div>
+                        </div>
 
-                          <div className='col-span-6 sm:col-span-3'>
-                            <label
-                              htmlFor='category'
-                              className='block text-sm font-medium text-gray-700'
-                            >
-                              Category
-                            </label>
-                            <select
-                              id='category'
-                              name='category'
-                              autoComplete='category'
-                              className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-400 focus:border-orange-400 sm:text-sm'
-                            >
-                              <option value=''>Please Select</option>
-                              <option>Agriculture</option>
-                              <option>Construction Mats</option>
-                              <option>Office Supplies</option>
-                              <option>Mechanical</option>
-                              <option>Electrical</option>
-                              <option>Plumbing</option>
-                              <option>Fire Protection</option>
-                              <option>CCTV / Security</option>
-                            </select>
-                          </div>
-
-                          <div className='col-span-6 sm:col-span-3'>
-                            <label
-                              htmlFor='budget'
-                              className='block text-sm font-medium text-gray-700'
-                            >
-                              Budget
-                            </label>
-                            <div className='mt-1 relative rounded-md shadow-sm'>
-                              <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-                                <span className='text-gray-500 sm:text-sm'>
-                                  P
-                                </span>
-                              </div>
-                              <input
-                                type='text'
-                                name='budget'
-                                id='budget'
-                                className='focus:ring-orange-400 focus:border-orange-400 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md'
-                                placeholder='0.00'
-                              />
-                              <div className='absolute inset-y-0 right-0 flex items-center'>
-                                <label htmlFor='currency' className='sr-only'>
-                                  Currency
-                                </label>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className='col-span-6'>
-                            <label className='block text-sm font-medium text-gray-700'>
-                              Files / Photos
-                            </label>
-                            <div className='mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md'>
-                              <div className='space-y-1 text-center'>
-                                <svg
-                                  className='mx-auto h-12 w-12 text-gray-400'
-                                  stroke='currentColor'
-                                  fill='none'
-                                  viewBox='0 0 48 48'
-                                  aria-hidden='true'
+                        <div className='col-span-6'>
+                          <label className='block text-sm font-medium text-gray-700'>
+                            Files / Photos
+                          </label>
+                          <div className='mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md'>
+                            <div className='space-y-1 text-center'>
+                              <svg
+                                className='mx-auto h-12 w-12 text-gray-400'
+                                stroke='currentColor'
+                                fill='none'
+                                viewBox='0 0 48 48'
+                                aria-hidden='true'
+                              >
+                                <path
+                                  d='M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02'
+                                  strokeWidth={2}
+                                  strokeLinecap='round'
+                                  strokeLinejoin='round'
+                                />
+                              </svg>
+                              <div className='flex text-sm text-gray-600'>
+                                <label
+                                  htmlFor='file-upload'
+                                  className='relative cursor-pointer bg-white rounded-md font-medium text-orange-500 hover:text-orange-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-orange-500'
                                 >
-                                  <path
-                                    d='M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02'
-                                    strokeWidth={2}
-                                    strokeLinecap='round'
-                                    strokeLinejoin='round'
+                                  <span>Upload a file</span>
+                                  <input
+                                    id='file-upload'
+                                    name='file-upload'
+                                    type='file'
+                                    className='sr-only'
                                   />
-                                </svg>
-                                <div className='flex text-sm text-gray-600'>
-                                  <label
-                                    htmlFor='file-upload'
-                                    className='relative cursor-pointer bg-white rounded-md font-medium text-orange-500 hover:text-orange-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-orange-500'
-                                  >
-                                    <span>Upload a file</span>
-                                    <input
-                                      id='file-upload'
-                                      name='file-upload'
-                                      type='file'
-                                      className='sr-only'
-                                    />
-                                  </label>
-                                  <p className='pl-1'>or drag and drop</p>
-                                </div>
-                                <p className='text-xs text-gray-500'>
-                                  PNG, JPG, GIF up to 10MB
-                                </p>
+                                </label>
+                                <p className='pl-1'>or drag and drop</p>
                               </div>
+                              <p className='text-xs text-gray-500'>
+                                PNG, JPG, GIF up to 10MB
+                              </p>
                             </div>
                           </div>
                         </div>
                       </div>
-                      <div className='px-4 py-3 bg-gray-50 text-right sm:px-6'>
-                        <button
-                          type='submit'
-                          className='inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500'
-                        >
-                          Save
-                        </button>
-                      </div>
                     </div>
-                  </form>
+                  </div>
                 </div>
               </div>
             </div>

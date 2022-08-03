@@ -1,4 +1,4 @@
-import { Link, Router } from '@reach/router'
+import { Link, Router } from '@gatsbyjs/reach-router'
 
 import LoginForm from './login-form'
 import RegisterForm from './register-form'
