@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import Axios from 'axios'
-import { useForm } from 'react-hook-form'
+import { useImmerReducer } from 'use-immer'
 
 import { StepperContext } from '../../../context/stepper-context'
+import { StepperDispatch } from '../../../context/stepper-dispatch'
 import Stepper from './stepper'
 import StepperControl from './stepper-control'
 import Account from './steps/account'
@@ -77,16 +78,40 @@ const AccountInformationForm = () => {
     }
   }
 
+  //Form validations
+  const originalState = {
+    firstnameMain: '',
+    isSaving: false,
+    sendCount: 0,
+  }
+
+  function ourReducer(draft, action) {
+    switch (action.type) {
+      case 'firstnameChange11':
+        draft.firstname.hasErrors = false
+        draft.firstname.value = action.value
+        return
+      case 'firstnameRules11':
+        if (!action.value.trim()) {
+          draft.firstname.hasErrors = true
+          draft.firstname.message = 'You must provide a title.'
+        }
+        return
+    }
+  }
+
+  const [state, dispatch] = useImmerReducer(ourReducer, originalState)
+
   return (
     <div className='md:w-1/2 mx-auto shadow-xl rounded-2xl pb-2 bg-white'>
       <div className='container horizontal mt-5'>
         <Stepper steps={steps} currentStep={currentStep} />
 
         <div className='my-10'>
-          <StepperContext.Provider
-            value={{ userData, setUserData, finalData, setFinalData }}
-          >
-            {displayStep(currentStep)}
+          <StepperContext.Provider value={state}>
+            <StepperDispatch.Provider value={dispatch}>
+              {displayStep(currentStep)}
+            </StepperDispatch.Provider>
           </StepperContext.Provider>
         </div>
       </div>
