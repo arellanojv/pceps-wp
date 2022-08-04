@@ -1,8 +1,7 @@
 import React, { useContext, useState } from 'react'
 import { useImmerReducer } from 'use-immer'
 import { StepperContext } from '../../../../context/stepper-context'
-import StateContext from '../../../../context/StateContext'
-import DispatchContext from '../../../../context/DispatchContext'
+import { StepperDispatch } from '../../../../context/stepper-dispatch'
 
 import {
   regions,
@@ -13,7 +12,9 @@ import {
 } from 'select-philippines-address'
 
 export default function Account() {
-  const { userData, setUserData } = useContext(StepperContext)
+  // const { userData, setUserData } = useContext(StepperContext)
+  const stepState = useContext(StepperContext)
+  const stepDispatch = useContext(StepperDispatch)
 
   const [regionData, setRegion] = useState([])
   const [regionByCodeData, setRegionByCode] = useState([])
@@ -40,12 +41,17 @@ export default function Account() {
       case 'firstnameChange':
         draft.firstname.hasErrors = false
         draft.firstname.value = action.value
+        stepState.firstnameMain = action.value
         return
       case 'firstnameRules':
         if (!action.value.trim()) {
           draft.firstname.hasErrors = true
-          draft.firstname.message = 'You must provide a title.'
+          draft.firstname.message = 'First name is required.'
+        } else if (action.value.length > 4) {
+          draft.firstname.hasErrors = true
+          draft.firstname.message = 'First name must be less than four.'
         }
+
         return
     }
   }
@@ -53,14 +59,13 @@ export default function Account() {
   const [state, dispatch] = useImmerReducer(ourReducer, originalState)
 
   console.log('Original State Data', state)
-  console.log('Context Data', userData['firstname'])
 
   //Address dropdown logic
-  if (userData['region']) {
-    regionByCode(userData['region']).then((region) =>
-      setRegionByCode(region.region_name)
-    )
-  }
+  // if (userData['region']) {
+  //   regionByCode(userData['region']).then((region) =>
+  //     setRegionByCode(region.region_name)
+  //   )
+  // }
 
   const getRegionByCode = (code) => {
     regionByCode(code).then((region) => setRegionByCode(region.region_name))
@@ -102,13 +107,11 @@ export default function Account() {
 
   const handleRegionDropdownClick = (e) => {
     region()
-    console.log('Region 111', userData['region'])
-    console.log('Region 222', regionByCodeData)
   }
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setUserData({ ...userData, [name]: value })
+    // const { name, value } = e.target
+    // setUserData({ ...userData, [name]: value })
   }
 
   return (
@@ -178,19 +181,20 @@ export default function Account() {
                                 value: e.target.value,
                               })
                             }
-                            onInput={handleChange}
                             onBlur={(e) =>
                               dispatch({
                                 type: 'firstnameRules',
                                 value: e.target.value,
                               })
                             }
-                            // value={state.firstname.value}
                             value={
-                              state.firstname.value
-                                ? state.firstname.value
-                                : userData['firstname']
+                              state.firstname.value || stepState.firstnameMain
                             }
+                            // value={
+                            //   state.firstname.value
+                            //     ? state.firstname.value
+                            //     : stepState.firstnameMain.value
+                            // }
                             // value={userData['firstname'] || ''}
                             type='text'
                             name='firstname'
@@ -201,7 +205,7 @@ export default function Account() {
                           />
                           {state.firstname.hasErrors && (
                             <p className='peer-invalid:visible text-red-700 font-light sm:text-sm ml-1 border w-fit bg-red-100 p-2 rounded-md'>
-                              First name is required
+                              {state.firstname.message}
                             </p>
                           )}
                         </div>
@@ -215,7 +219,7 @@ export default function Account() {
                           </label>
                           <input
                             onChange={handleChange}
-                            value={userData['lastname'] || ''}
+                            // value={userData['lastname'] || ''}
                             type='text'
                             name='lastname'
                             id='lastname'
@@ -235,7 +239,7 @@ export default function Account() {
                           <div className='relative'>
                             <input
                               onChange={handleChange}
-                              value={userData['dateOfBirth'] || ''}
+                              // value={userData['dateOfBirth'] || ''}
                               type='date'
                               name='dateOfBirth'
                               placeholder='mm/dd/yyyy'
@@ -253,7 +257,7 @@ export default function Account() {
                           </label>
                           <input
                             onChange={handleChange}
-                            value={userData['streetAdress'] || ''}
+                            // value={userData['streetAdress'] || ''}
                             type='text'
                             name='streetAdress'
                             id='streetAdress'
@@ -281,7 +285,6 @@ export default function Account() {
                             className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-400 focus:border-orange-400 sm:text-sm'
                           >
                             <option disabled>Select Region</option>
-                            {console.log('the data', userData['region'])}
                             {regionData &&
                               regionData.length > 0 &&
                               regionData.map((item) => {
