@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import Axios from 'axios'
 import { useForm } from 'react-hook-form'
 
-import { StepperContext } from '../../../contexts/stepper-context'
+import { StepperContext } from '../../../context/stepper-context'
 import Stepper from './stepper'
 import StepperControl from './stepper-control'
 import Account from './steps/account'
