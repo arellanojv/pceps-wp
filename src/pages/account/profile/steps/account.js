@@ -1,8 +1,8 @@
 import React, { useContext, useState } from 'react'
 import { useImmerReducer } from 'use-immer'
-import { StepperContext } from '../../../../contexts/stepper-context'
+import { StepperContext } from '../../../../context/stepper-context'
 import StateContext from '../../../../context/StateContext'
-import DispatchContext from '../../../../contexts/DispatchContext'
+import DispatchContext from '../../../../context/DispatchContext'
 
 import {
   regions,
@@ -14,8 +14,6 @@ import {
 
 export default function Account() {
   const { userData, setUserData } = useContext(StepperContext)
-  const appState = useContext(StateContext)
-  const appDispatch = useContext(DispatchContext)
 
   const [regionData, setRegion] = useState([])
   const [regionByCodeData, setRegionByCode] = useState([])
@@ -42,7 +40,6 @@ export default function Account() {
       case 'firstnameChange':
         draft.firstname.hasErrors = false
         draft.firstname.value = action.value
-
         return
       case 'firstnameRules':
         if (!action.value.trim()) {
@@ -56,6 +53,7 @@ export default function Account() {
   const [state, dispatch] = useImmerReducer(ourReducer, originalState)
 
   console.log('Original State Data', state)
+  console.log('Context Data', userData['firstname'])
 
   //Address dropdown logic
   if (userData['region']) {
@@ -180,13 +178,19 @@ export default function Account() {
                                 value: e.target.value,
                               })
                             }
+                            onInput={handleChange}
                             onBlur={(e) =>
                               dispatch({
                                 type: 'firstnameRules',
                                 value: e.target.value,
                               })
                             }
-                            value={state.firstname.value}
+                            // value={state.firstname.value}
+                            value={
+                              state.firstname.value
+                                ? state.firstname.value
+                                : userData['firstname']
+                            }
                             // value={userData['firstname'] || ''}
                             type='text'
                             name='firstname'

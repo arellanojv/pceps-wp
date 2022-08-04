@@ -12,7 +12,7 @@ import './index.scss'
 import { useAppApolloClient } from './hooks'
 
 import StateContext from './context/StateContext'
-import DispatchContext from './contexts/DispatchContext'
+import DispatchContext from './context/DispatchContext'
 import { AuthContextProvider } from './context'
 
 //My Components
