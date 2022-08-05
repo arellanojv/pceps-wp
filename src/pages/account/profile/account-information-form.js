@@ -12,13 +12,24 @@ import Final from './steps/final'
 import Payment from './steps/final'
 
 const AccountInformationForm = () => {
-  //Hook form
-
   const [currentStep, setCurrentStep] = useState(1)
-  const [userData, setUserData] = useState('')
-  const [finalData, setFinalData] = useState([])
-
   const steps = ['Business Information', 'General Information', 'Complete']
+
+  //Handle State Context
+  const originalState = {
+    mainFirstName: '',
+    mainLastName: '',
+    mainDateOfBirth: '',
+    mainRegionText: '',
+    mainRegionValue: '',
+    isSaving: false,
+    sendCount: 0,
+  }
+
+  const ourReducer = (draft, action) => {
+    switch (action.type) {
+    }
+  }
 
   const displayStep = (step) => {
     switch (step) {
@@ -41,9 +52,6 @@ const AccountInformationForm = () => {
 
     console.log('My Steps', newStep)
     if (newStep == 3) {
-      console.log('Userdata show here', userData)
-      console.log('First Name', userData['firstname'])
-
       try {
         const response = await Axios.post(
           'http://localhost:10026/wp-json/wp/v2/users/me',
@@ -75,28 +83,6 @@ const AccountInformationForm = () => {
       } catch (e) {
         console.log('there was a problem')
       }
-    }
-  }
-
-  //Form validations
-  const originalState = {
-    firstnameMain: '',
-    isSaving: false,
-    sendCount: 0,
-  }
-
-  function ourReducer(draft, action) {
-    switch (action.type) {
-      case 'firstnameChange11':
-        draft.firstname.hasErrors = false
-        draft.firstname.value = action.value
-        return
-      case 'firstnameRules11':
-        if (!action.value.trim()) {
-          draft.firstname.hasErrors = true
-          draft.firstname.message = 'You must provide a title.'
-        }
-        return
     }
   }
 

@@ -34,6 +34,22 @@ export default function Account() {
       hasErrors: false,
       message: '',
     },
+    lastname: {
+      value: '',
+      hasErrors: false,
+      message: '',
+    },
+    dateOfBirth: {
+      value: '',
+      hasErrors: false,
+      message: '',
+    },
+    region: {
+      value: '',
+      text: '',
+      hasErrors: false,
+      message: '',
+    },
   }
 
   function ourReducer(draft, action) {
@@ -41,25 +57,55 @@ export default function Account() {
       case 'firstnameChange':
         draft.firstname.hasErrors = false
         draft.firstname.value = action.value
-        stepState.firstnameMain = action.value
+        stepState.mainFirstName = action.value
+        return
+      case 'lastnameChange':
+        draft.lastname.hasErrors = false
+        draft.lastname.value = action.value
+        stepState.mainLastName = action.value
+        return
+      case 'dateOfBirthChange':
+        draft.dateOfBirth.hasErrors = false
+        draft.dateOfBirth.value = action.value
+        stepState.mainDateOfBirth = action.value
+        return
+      case 'regionChange':
+        draft.region.hasErrors = false
+        draft.region.value = action.value
+        draft.region.text = action.text
+        stepState.mainRegionValue = action.value
+        stepState.mainRegionText = action.text
         return
       case 'firstnameRules':
         if (!action.value.trim()) {
           draft.firstname.hasErrors = true
-          draft.firstname.message = 'First name is required.'
-        } else if (action.value.length > 4) {
-          draft.firstname.hasErrors = true
-          draft.firstname.message = 'First name must be less than four.'
+          draft.firstname.message = 'First name is required'
         }
-
+        return
+      case 'lastnameRules':
+        if (!action.value.trim()) {
+          draft.lastname.hasErrors = true
+          draft.lastname.message = 'Last name is required'
+        }
+        return
+      case 'dateOfBirthRules':
+        if (!action.value.trim()) {
+          draft.dateOfBirth.hasErrors = true
+          draft.dateOfBirth.message = 'Date of birth is required'
+        }
+        return
+      case 'regionRules':
+        if (action.value == 0) {
+          draft.region.hasErrors = true
+          draft.region.message = 'Please select a region'
+        }
         return
     }
   }
 
   const [state, dispatch] = useImmerReducer(ourReducer, originalState)
 
-  console.log('Original State Data', state)
-
+  console.log('Originla State', state)
   //Address dropdown logic
   // if (userData['region']) {
   //   regionByCode(userData['region']).then((region) =>
@@ -69,7 +115,6 @@ export default function Account() {
 
   const getRegionByCode = (code) => {
     regionByCode(code).then((region) => setRegionByCode(region.region_name))
-    console.log('Dara d.i nimal', regionByCodeData)
   }
 
   const region = () => {
@@ -84,6 +129,12 @@ export default function Account() {
       setProvince(response)
       setCity([])
       setBarangay([])
+    })
+
+    dispatch({
+      type: 'regionChange',
+      value: e.target.selectedOptions[0].value,
+      text: e.target.selectedOptions[0].text,
     })
   }
 
@@ -188,14 +239,8 @@ export default function Account() {
                               })
                             }
                             value={
-                              state.firstname.value || stepState.firstnameMain
+                              state.firstname.value || stepState.mainFirstName
                             }
-                            // value={
-                            //   state.firstname.value
-                            //     ? state.firstname.value
-                            //     : stepState.firstnameMain.value
-                            // }
-                            // value={userData['firstname'] || ''}
                             type='text'
                             name='firstname'
                             id='firstname'
@@ -218,15 +263,33 @@ export default function Account() {
                             Last name
                           </label>
                           <input
-                            onChange={handleChange}
-                            // value={userData['lastname'] || ''}
+                            onChange={(e) =>
+                              dispatch({
+                                type: 'lastnameChange',
+                                value: e.target.value,
+                              })
+                            }
+                            onBlur={(e) =>
+                              dispatch({
+                                type: 'lastnameRules',
+                                value: e.target.value,
+                              })
+                            }
+                            value={
+                              state.lastname.value || stepState.mainLastName
+                            }
                             type='text'
                             name='lastname'
                             id='lastname'
                             placeholder='Enter your last name'
-                            autoComplete='given-name'
+                            autoComplete='off'
                             className='mt-1 focus:ring-orange-400 focus:border-orange-400 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
                           />
+                          {state.lastname.hasErrors && (
+                            <p className='peer-invalid:visible text-red-700 font-light sm:text-sm ml-1 border w-fit bg-red-100 p-2 rounded-md'>
+                              {state.lastname.message}
+                            </p>
+                          )}
                         </div>
 
                         <div className='col-span-6 sm:col-span-3'>
@@ -238,13 +301,32 @@ export default function Account() {
                           </label>
                           <div className='relative'>
                             <input
-                              onChange={handleChange}
-                              // value={userData['dateOfBirth'] || ''}
+                              onChange={(e) =>
+                                dispatch({
+                                  type: 'dateOfBirthChange',
+                                  value: e.target.value,
+                                })
+                              }
+                              onBlur={(e) =>
+                                dispatch({
+                                  type: 'dateOfBirthRules',
+                                  value: e.target.value,
+                                })
+                              }
+                              value={
+                                state.dateOfBirth.value ||
+                                stepState.mainDateOfBirth
+                              }
                               type='date'
                               name='dateOfBirth'
                               placeholder='mm/dd/yyyy'
                               className='mt-1 focus:ring-orange-400 focus:border-orange-400 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
                             />
+                            {state.dateOfBirth.hasErrors && (
+                              <p className='peer-invalid:visible text-red-700 font-light sm:text-sm ml-1 border w-fit bg-red-100 p-2 rounded-md'>
+                                {state.dateOfBirth.message}
+                              </p>
+                            )}
                           </div>
                         </div>
 
@@ -262,7 +344,7 @@ export default function Account() {
                             name='streetAdress'
                             id='streetAdress'
                             placeholder='Enter your street adress'
-                            autoComplete='given-name'
+                            autoComplete='off'
                             className='mt-1 focus:ring-orange-400 focus:border-orange-400 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
                           />
                         </div>
@@ -277,14 +359,25 @@ export default function Account() {
                           <select
                             id='region'
                             name='region'
-                            onBlur={handleChange}
+                            onBlur={(e) =>
+                              dispatch({
+                                type: 'regionRules',
+                                value: e.target.value,
+                              })
+                            }
                             onChange={province}
                             onSelect={region}
                             onClick={handleRegionDropdownClick}
-                            autoComplete='region'
+                            value={
+                              state.region.value || stepState.mainRegionValue
+                            }
+                            autoComplete='off'
                             className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-400 focus:border-orange-400 sm:text-sm'
                           >
-                            <option disabled>Select Region</option>
+                            {stepState.mainRegionText && (
+                              <option>{stepState.mainRegionText}</option>
+                            )}
+                            <option value='0'>Select Region</option>
                             {regionData &&
                               regionData.length > 0 &&
                               regionData.map((item) => {
@@ -298,6 +391,11 @@ export default function Account() {
                                 )
                               })}
                           </select>
+                          {state.region.hasErrors && (
+                            <p className='peer-invalid:visible text-red-700 font-light sm:text-sm ml-1 border w-fit bg-red-100 p-2 rounded-md'>
+                              {state.region.message}
+                            </p>
+                          )}
                         </div>
 
                         <div className='col-span-6 sm:col-span-6 lg:col-span-2'>
@@ -311,7 +409,7 @@ export default function Account() {
                             id='province'
                             name='province'
                             onChange={city}
-                            autoComplete='province'
+                            autoComplete='off'
                             className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-400 focus:border-orange-400 sm:text-sm'
                           >
                             <option disabled>Select Province</option>
@@ -339,7 +437,7 @@ export default function Account() {
                             id='city'
                             name='city'
                             onChange={barangay}
-                            autoComplete='city'
+                            autoComplete='off'
                             className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-400 focus:border-orange-400 sm:text-sm'
                           >
                             <option disabled>Select City</option>
@@ -367,7 +465,7 @@ export default function Account() {
                             id='barangay'
                             name='barangay'
                             onChange={brgy}
-                            autoComplete='barangay'
+                            autoComplete='off'
                             className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-400 focus:border-orange-400 sm:text-sm'
                           >
                             <option disabled>Select Barangay</option>
@@ -395,7 +493,7 @@ export default function Account() {
                             type='text'
                             name='postal-code'
                             id='postal-code'
-                            autoComplete='postal-code'
+                            autoComplete='off'
                             className='mt-1 focus:ring-orange-400 focus:border-orange-400 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
                           />
                         </div>
@@ -457,7 +555,7 @@ export default function Account() {
                           <select
                             id='category'
                             name='category'
-                            autoComplete='category'
+                            autoComplete='off'
                             className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-400 focus:border-orange-400 sm:text-sm'
                           >
                             <option value=''>Please Select</option>
