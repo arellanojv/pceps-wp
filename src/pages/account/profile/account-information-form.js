@@ -22,6 +22,8 @@ const AccountInformationForm = () => {
     mainDateOfBirth: '',
     mainRegionText: '',
     mainRegionValue: '',
+    mainProvinceText: '',
+    mainProvinceValue: '',
     isSaving: false,
     sendCount: 0,
   }
