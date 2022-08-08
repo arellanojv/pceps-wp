@@ -50,6 +50,11 @@ export default function Account() {
       hasErrors: false,
       message: '',
     },
+    province: {
+      value: '',
+      hasErrors: false,
+      message: '',
+    },
   }
 
   function ourReducer(draft, action) {
@@ -75,6 +80,12 @@ export default function Account() {
         draft.region.text = action.text
         stepState.mainRegionValue = action.value
         stepState.mainRegionText = action.text
+        return
+      case 'provinceChange':
+        draft.province.hasErrors = false
+        draft.province.value = action.value
+        stepState.mainProvinceValue = action.value
+        stepState.mainProvinceText = action.text
         return
       case 'firstnameRules':
         if (!action.value.trim()) {
@@ -142,6 +153,12 @@ export default function Account() {
     setProvinceAddr(e.target.selectedOptions[0].text)
     cities(e.target.value).then((response) => {
       setCity(response)
+    })
+
+    dispatch({
+      type: 'provinceChange',
+      value: e.target.selectedOptions[0].value,
+      text: e.target.selectedOptions[0].text,
     })
   }
 
@@ -409,9 +426,15 @@ export default function Account() {
                             id='province'
                             name='province'
                             onChange={city}
+                            value={
+                              state.province.value || stepState.mainProvince
+                            }
                             autoComplete='off'
                             className='mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-400 focus:border-orange-400 sm:text-sm'
                           >
+                            {stepState.mainProvinceText && (
+                              <option>{stepState.mainProvinceText}</option>
+                            )}
                             <option disabled>Select Province</option>
                             {provinceData &&
                               provinceData.length > 0 &&
