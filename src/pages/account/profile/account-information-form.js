@@ -24,6 +24,7 @@ const AccountInformationForm = () => {
     mainRegionValue: '',
     mainProvinceText: '',
     mainProvinceValue: '',
+    mainMyFiles: [],
     isSaving: false,
     sendCount: 0,
   }
@@ -53,7 +54,10 @@ const AccountInformationForm = () => {
     newStep > 0 && newStep <= steps.length && setCurrentStep(newStep)
 
     console.log('My Steps', newStep)
+    console.log('My Files', state.mainMyFiles)
+
     if (newStep == 3) {
+      console.log('Executed Action')
       try {
         const response = await Axios.post(
           'http://localhost:10026/wp-json/wp/v2/users/me',
@@ -61,7 +65,7 @@ const AccountInformationForm = () => {
             acf: {
               business_type: 'corporation',
               representatives_information: {
-                first_name: userData['firstname'],
+                first_name: 'JAA',
                 last_name: 'how to fix this?',
                 date_of_birth: '2022-06-30',
                 street_address: 'Liloan',
@@ -70,11 +74,17 @@ const AccountInformationForm = () => {
                 city: '07',
                 barangay: '07',
                 zip: '07',
-                full_address: '07',
+                full_address: '08',
+                sample_picture: state.mainMyFiles[0],
               },
             },
           },
           {
+            headers: {
+              'Content-Type': 'image/png; charset= UTF-8',
+              'Content-Disposition':
+                'attachment; filename=/"' + state.mainMyFiles[0].name + '/"',
+            },
             auth: {
               username: 'developer',
               password: 'sJz1 wy6e jel5 J6CG gLlt 86mn',

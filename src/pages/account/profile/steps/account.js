@@ -1,5 +1,6 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useCallback } from 'react'
 import { useImmerReducer } from 'use-immer'
+import { useDropzone } from 'react-dropzone'
 import { StepperContext } from '../../../../context/stepper-context'
 import { StepperDispatch } from '../../../../context/stepper-dispatch'
 
@@ -12,7 +13,8 @@ import {
 } from 'select-philippines-address'
 
 export default function Account() {
-  // const { userData, setUserData } = useContext(StepperContext)
+  const [myFiles, setMyFiles] = useState([])
+  const [acceptedFiles2, setAcceptedFiles2] = useState([])
   const stepState = useContext(StepperContext)
   const stepDispatch = useContext(StepperDispatch)
 
@@ -55,6 +57,9 @@ export default function Account() {
       hasErrors: false,
       message: '',
     },
+    contextFiles: {
+      value: [],
+    },
   }
 
   function ourReducer(draft, action) {
@@ -86,6 +91,10 @@ export default function Account() {
         draft.province.value = action.value
         stepState.mainProvinceValue = action.value
         stepState.mainProvinceText = action.text
+        return
+      case 'myFilesChange':
+        draft.contextFiles.value = action.value
+        stepState.mainMyFiles = action.value
         return
       case 'firstnameRules':
         if (!action.value.trim()) {
@@ -123,6 +132,61 @@ export default function Account() {
   //     setRegionByCode(region.region_name)
   //   )
   // }
+
+  //Dropzone
+  const onDrop = useCallback(
+    (acceptedFiles) => {
+      setMyFiles([...myFiles, ...acceptedFiles])
+    },
+    [myFiles]
+  )
+
+  const onDropAccepted = useCallback((files) => {
+    // files.forEach((file) => {
+    //   const reader = new FileReader()
+
+    //   reader.onabort = () => console.log('file reading was aborted')
+    //   reader.onerror = () => console.log('file reading has failed')
+    //   reader.onload = () => {
+    //     // Do whatever you want with the file contents
+    //     const binaryStr = reader.result
+    //     console.log(binaryStr)
+    //   }
+    //   reader.readAsArrayBuffer(file)
+    //   // setAcceptedFiles2([...acceptedFiles2, ...reader.readAsArrayBuffer(file)])
+    //   console.log('ArrayBuffer', reader.readAsArrayBuffer(file))
+    // })
+
+    dispatch({
+      type: 'myFilesChange',
+      value: files,
+    })
+  })
+
+  console.log('MY FILES HERE:', myFiles)
+  console.log('MY FILES STEP STATE:', stepState.mainMyFiles)
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    onDropAccepted,
+  })
+
+  const removeFile = (file) => () => {
+    const newFiles = [...myFiles]
+    newFiles.splice(newFiles.indexOf(file), 1)
+    setMyFiles(newFiles)
+  }
+
+  const removeAll = () => {
+    setMyFiles([])
+  }
+
+  const files = myFiles.map((file) => (
+    <li key={file.path}>
+      {file.path} - {file.size} bytes{' '}
+      <button onClick={removeFile(file)}>Remove File</button>
+    </li>
+  ))
 
   const getRegionByCode = (code) => {
     regionByCode(code).then((region) => setRegionByCode(region.region_name))
@@ -659,6 +723,27 @@ export default function Account() {
                               <p className='text-xs text-gray-500'>
                                 PNG, JPG, GIF up to 10MB
                               </p>
+
+                              <section className='container'>
+                                <div
+                                  {...getRootProps({ className: 'dropzone' })}
+                                >
+                                  <input {...getInputProps()} />
+                                  <p>
+                                    Drag 'n' drop some files here, or click to
+                                    select files
+                                  </p>
+                                </div>
+                                <aside>
+                                  <h4>Files</h4>
+                                  <ul>{files}</ul>
+                                </aside>
+                                {files.length > 0 && (
+                                  <button onClick={removeAll}>
+                                    Remove All
+                                  </button>
+                                )}
+                              </section>
                             </div>
                           </div>
                         </div>
