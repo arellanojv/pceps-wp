@@ -1,4 +1,5 @@
 import React, { useContext, useState, useCallback } from 'react'
+import Axios from 'axios'
 import { useImmerReducer } from 'use-immer'
 import { useDropzone } from 'react-dropzone'
 import { StepperContext } from '../../../../context/stepper-context'
@@ -125,6 +126,34 @@ export default function Account() {
 
   const [state, dispatch] = useImmerReducer(ourReducer, originalState)
 
+  const handleFileUpload = async (file) => {
+    var formData = new FormData()
+    formData.append('file', file)
+    formData.append('title', file.name)
+
+    console.log('File Data', file)
+
+    try {
+      const response = await Axios.post(
+        'http://localhost:10026/wp-json/wp/v2/media',
+        formData,
+        {
+          headers: {
+            'Content-Disposition': "form-data; filename='" + file.name + "'",
+          },
+          auth: {
+            username: 'developer',
+            password: 'sJz1 wy6e jel5 J6CG gLlt 86mn',
+          },
+        }
+      )
+      console.log('Upload Data', response)
+    } catch (e) {
+      console.log('Upload Data', e)
+      console.log('there was a problem with file upload')
+    }
+  }
+
   console.log('Originla State', state)
   //Address dropdown logic
   // if (userData['region']) {
@@ -156,6 +185,8 @@ export default function Account() {
     //   // setAcceptedFiles2([...acceptedFiles2, ...reader.readAsArrayBuffer(file)])
     //   console.log('ArrayBuffer', reader.readAsArrayBuffer(file))
     // })
+
+    handleFileUpload(files[0])
 
     dispatch({
       type: 'myFilesChange',
