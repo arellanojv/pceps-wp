@@ -13,7 +13,7 @@ import Payment from './steps/final'
 
 const AccountInformationForm = () => {
   const [currentStep, setCurrentStep] = useState(1)
-  const steps = ['Business Information', 'General Information', 'Complete']
+  const steps = ['General Information', 'Business Information', 'Complete']
 
   //Handle State Context
   const originalState = {
@@ -37,9 +37,10 @@ const AccountInformationForm = () => {
   const displayStep = (step) => {
     switch (step) {
       case 1:
-        return <Account />
-      case 2:
         return <Details />
+
+      case 2:
+        return <Account />
       case 3:
         return <Final />
       default:
