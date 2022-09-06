@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 import { useImmerReducer } from 'use-immer'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+// import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Router } from '@gatsbyjs/reach-router'
 
 import Logo from './assets/altafino.svg'
@@ -16,7 +16,7 @@ import DispatchContext from './context/DispatchContext'
 import { AuthContextProvider } from './context'
 
 //My Components
-import Header from './components/Header'
+import SiteHeader from './components/site-header'
 import HomeGuest from './components/HomeGuest'
 import Footer from './components/Footer'
 import PrivacyPolicy from './components/PrivacyPolicy'
@@ -32,32 +32,33 @@ import Account from './pages/account'
 function App() {
   const client = useAppApolloClient()
 
-  const initialState = {
-    loggedIn: Boolean(localStorage.getItem('complexappToken')),
-    flashMessages: [],
-  }
+  // const initialState = {
+  //   loggedIn: Boolean(localStorage.getItem('complexappToken')),
+  //   flashMessages: [],
+  // }
 
-  function ourReducer(draft, action) {
-    switch (action.type) {
-      case 'login':
-        draft.loggedIn = true
-        return
-      case 'logout':
-        draft.loggedIn = false
-        return
-      case 'flashMessage':
-        draft.flashMessages.push(action.value)
-        return
-    }
-  }
-  const [state, dispatch] = useImmerReducer(ourReducer, initialState)
+  // function ourReducer(draft, action) {
+  //   switch (action.type) {
+  //     case 'login':
+  //       draft.loggedIn = true
+  //       return
+  //     case 'logout':
+  //       draft.loggedIn = false
+  //       return
+  //     case 'flashMessage':
+  //       draft.flashMessages.push(action.value)
+  //       return
+  //   }
+  // }
+  // const [state, dispatch] = useImmerReducer(ourReducer, initialState)
 
   return (
     <AuthContextProvider>
-      <StateContext.Provider value={state}>
-        <DispatchContext.Provider value={dispatch}>
-          <ApolloProvider client={client}>
-            <BrowserRouter>
+      {/* <StateContext.Provider value={state}> */}
+      {/* <DispatchContext.Provider value={dispatch}> */}
+      <ApolloProvider client={client}>
+        <SiteHeader />
+        {/* <BrowserRouter>
               <Header />
               <Routes>
                 <Route path='/' element={<HomeGuest />} />
@@ -72,14 +73,15 @@ function App() {
                 <Route path='/signup' element={<SignUp />} />
                 <Route path='/signin' element={<SignIn />} />
               </Routes>
-            </BrowserRouter>
-            <Router primary={false}>
-              <Account path='/account/*' />
-            </Router>
-          </ApolloProvider>
-          <Footer />
-        </DispatchContext.Provider>
-      </StateContext.Provider>
+            </BrowserRouter> */}
+        <Router primary={false}>
+          <HomeGuest path='/' />
+          <Account path='/account/*' />
+        </Router>
+      </ApolloProvider>
+      <Footer />
+      {/* </DispatchContext.Provider> */}
+      {/* </StateContext.Provider> */}
     </AuthContextProvider>
   )
 }
