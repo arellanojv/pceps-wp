@@ -1,14 +1,9 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { Link } from '@gatsbyjs/reach-router'
-import HeaderLoggedIn from './HeaderLoggedIn'
-import HeaderLoggedOut from './HeaderLoggedOut'
-import StateContext from '../context/StateContext'
 
-import SiteNav from './site-nav'
+import SiteNav from '../site-nav'
 
-function Header(props) {
-  // const appState = useContext(StateContext)
-
+export const SiteHeader = () => {
   return (
     <header className='flex-none relative z-50 text-sm leading-6 font-medium ring-1 ring-gray-900 ring-opacity-5 shadow-sm py-5 bg-white'>
       <nav
@@ -28,18 +23,11 @@ function Header(props) {
               Committed to connecting end users and vendors fast
             </span>
           </p>
-
           <SiteNav />
-
-          {/* {appState.loggedIn ? (
-            <HeaderLoggedIn setLoggedIn={props.setLoggedIn} />
-          ) : (
-            <HeaderLoggedOut setLoggedIn={props.setLoggedIn} />
-          )} */}
         </div>
       </nav>
     </header>
   )
 }
 
-export default Header
+export default SiteHeader
