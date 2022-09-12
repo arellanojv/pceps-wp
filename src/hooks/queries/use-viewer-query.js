@@ -8,6 +8,9 @@ const VIEWER = gql`
   query viewer {
     viewer {
       jwtAuthToken
+      businessInformation {
+        businessInfoSubmitted
+      }
       id
       email
       username

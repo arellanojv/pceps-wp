@@ -10,6 +10,8 @@ import {
 } from 'select-philippines-address'
 import AccountInformationForm from './account-information-form'
 
+import Loader from '../../../components/loader'
+
 export const Profile = () => {
   const { viewer, loadingViewer, logout } = useAuth()
 
@@ -64,7 +66,7 @@ export const Profile = () => {
     region()
   }
 
-  console.log('Viewer Data:', viewer)
+  console.log('Viewer Data:', viewer.businessInformation.businessInfoSubmitted)
   // console.log('Data:', viewer.accounts.nodes[0].accountStatus)
   // useEffect(() => {
   //   region()
@@ -103,21 +105,17 @@ export const Profile = () => {
     }
   }
 
+  if (viewer.businessInformation.businessInfoSubmitted) {
+    window.location.replace('http://localhost:10026/account/')
+  }
+
   return (
     <div className='profile mb-10'>
-      <hgroup>
-        <h2>Account</h2>
-        <div>
-          <p>
-            Edit your account details below, or{' '}
-            <button onClick={logout} className='link-button'>
-              sign out here
-            </button>
-            .
-          </p>
-        </div>
-      </hgroup>
-      <AccountInformationForm />
+      {viewer.businessInformation.businessInfoSubmitted ? (
+        <Loader />
+      ) : (
+        <AccountInformationForm />
+      )}
     </div>
   )
 }

@@ -17,9 +17,9 @@ const Login = () => {
               Sign in to your account
             </h2>
 
-            <p className='mt-8'>
+            <p className='mt-8 text-sm'>
               Sign in, or create an account, if you would like to submit a bid
-              or creat a purchase request. Lost your password?{' '}
+              or create a purchase request. Lost your password?{' '}
               <Link
                 to='reset'
                 className='text-orange-500 underline hover:text-orange-700'

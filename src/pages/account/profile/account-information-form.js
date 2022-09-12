@@ -104,6 +104,19 @@ const AccountInformationForm = () => {
   return (
     <div className='md:w-1/2 mx-auto shadow-xl rounded-2xl pb-2 bg-white'>
       <div className='container horizontal mt-5'>
+        <hgroup>
+          <h2>Account</h2>
+          <div>
+            <p>
+              Edit your account details below, or{' '}
+              <button onClick={logout} className='link-button'>
+                sign out here
+              </button>
+              .
+            </p>
+          </div>
+        </hgroup>
+
         <Stepper steps={steps} currentStep={currentStep} />
 
         <div className='my-10'>
