@@ -105,16 +105,16 @@ export const Profile = () => {
     }
   }
 
-  if (viewer.businessInformation.businessInfoSubmitted) {
+  if (!viewer.businessInformation.businessInfoSubmitted) {
     window.location.replace('http://localhost:10026/account/')
   }
 
   return (
     <div className='profile mb-10'>
-      {viewer.businessInformation.businessInfoSubmitted ? (
+      {!viewer.businessInformation.businessInfoSubmitted ? (
         <Loader />
       ) : (
-        <AccountInformationForm />
+        <AccountInformationForm logout={logout} />
       )}
     </div>
   )

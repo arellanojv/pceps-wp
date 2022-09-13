@@ -27,6 +27,8 @@ export const RegisterForm = () => {
       return
     }
     register(username, email, password)
+
+    // console.log('Registration Status', status)
   }
 
   return (
