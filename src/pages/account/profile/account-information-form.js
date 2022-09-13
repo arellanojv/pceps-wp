@@ -11,7 +11,7 @@ import Details from './steps/details'
 import Final from './steps/final'
 import Payment from './steps/final'
 
-const AccountInformationForm = () => {
+const AccountInformationForm = (props) => {
   const [currentStep, setCurrentStep] = useState(1)
   const steps = ['General Information', 'Business Information', 'Complete']
 
@@ -103,20 +103,20 @@ const AccountInformationForm = () => {
 
   return (
     <div className='md:w-1/2 mx-auto shadow-xl rounded-2xl pb-2 bg-white'>
-      <div className='container horizontal mt-5'>
-        <hgroup>
-          <h2>Account</h2>
-          <div>
-            <p>
-              Edit your account details below, or{' '}
-              <button onClick={logout} className='link-button'>
-                sign out here
-              </button>
-              .
-            </p>
-          </div>
-        </hgroup>
+      <hgroup>
+        <h2>Account</h2>
+        <div>
+          <p>
+            Edit your account details below, or{' '}
+            <button onClick={props.logout} className='link-button'>
+              sign out here
+            </button>
+            .
+          </p>
+        </div>
+      </hgroup>
 
+      <div className='container horizontal mt-5'>
         <Stepper steps={steps} currentStep={currentStep} />
 
         <div className='my-10'>
