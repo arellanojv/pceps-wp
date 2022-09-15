@@ -26,7 +26,7 @@ export const Profile = () => {
   const [barangayAddr, setBarangayAddr] = useState('')
 
   if (loadingViewer || !viewer) {
-    return <h1>Loading user profile...</h1>
+    return null
   }
 
   const region = () => {
