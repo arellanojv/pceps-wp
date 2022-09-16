@@ -31,7 +31,7 @@ function HomeGuest() {
   console.log('PR DATA HERE', data)
 
   return (
-    <Page title='Welcome! | PCEPS' wide={true}>
+    <Page title='Welcome!' wide={true}>
       <div className='hidden md:block w-64 bg-gray-50 border-r border-gray-200 px-4 sm:px-6 lg:px-8x'>
         <div className='mb-10 mt-4'>
           <ul>
