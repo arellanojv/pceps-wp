@@ -114,7 +114,26 @@ export const Profile = () => {
       {!viewer.businessInformation.businessInfoSubmitted ? (
         <Loader />
       ) : (
-        <AccountInformationForm logout={logout} />
+        // <AccountInformationForm logout={logout} />
+        <div id='custom_dropdown_val' className='max-w-4xl mx-auto px-4 prose'>
+          <div
+            className='bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md mt-5 mb-5'
+            role='alert'
+          >
+            <div className='flex'>
+              <div>
+                <p className='font-bold'>
+                  Thank you for submitting your Business Information
+                </p>
+                <p className='text-sm'>
+                  Please give our team up to 7 working days to review your
+                  submission and respond. You may receive follow-up messages
+                  through text or e-mail.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )

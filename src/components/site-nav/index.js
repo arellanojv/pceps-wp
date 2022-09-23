@@ -15,7 +15,7 @@ const Navlink = (props) => (
 )
 
 export const SiteNav = () => {
-  const { isLoggedIn } = useAuth()
+  const { isLoggedIn, logout } = useAuth()
 
   return (
     <div className='w-full flex-none mt-4 sm:mt-0 sm:w-auto sm:ml-auto flex items-center'>
@@ -37,19 +37,16 @@ export const SiteNav = () => {
         className='group border-l pl-6 border-gray-200 hover:text-orange-600 flex items-center'
       >
         {isLoggedIn ? 'Account' : 'Sign in'}
-        <svg
-          aria-hidden='true'
-          width='11'
-          height='10'
-          fill='none'
-          className='flex-none ml-1.5 text-gray-400 group-hover:text-orange-600'
-        >
-          <path
-            d='M5.593 9.638L10.232 5 5.593.36l-.895.89 3.107 3.103H0v1.292h7.805L4.698 8.754l.895.884z'
-            fill='currentColor'
-          ></path>
-        </svg>
       </Link>
+      {isLoggedIn && (
+        <a
+          href='/'
+          onClick={logout}
+          className='group pl-6 hover:text-orange-600 flex items-center'
+        >
+          Logout
+        </a>
+      )}
     </div>
   )
 }
