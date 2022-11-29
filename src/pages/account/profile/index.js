@@ -66,7 +66,7 @@ export const Profile = () => {
     region()
   }
 
-  console.log('Viewer Data:', viewer.businessInformation.businessInfoSubmitted)
+  console.log('Viewer Data:', viewer)
   // console.log('Data:', viewer.accounts.nodes[0].accountStatus)
   // useEffect(() => {
   //   region()
