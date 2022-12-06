@@ -3,6 +3,7 @@ import { Router } from '@gatsbyjs/reach-router'
 import { useAuth } from '../../hooks'
 import Profile from './profile'
 import Login from './login'
+import { ResetPasswordEmail, ResetPassword } from './reset'
 import NotFound from '../../pages/not-found'
 
 const Account = () => {
@@ -13,8 +14,8 @@ const Account = () => {
     <Router>
       <NotFound default />
       <ViewComponent path='/*' />
-      {/* <ResetPasswordEmail path="/reset" /> */}
-      {/* <ResetPassword path="/reset/:resetLogin/:resetKey" /> */}
+      <ResetPasswordEmail path='/reset' />
+      <ResetPassword path='/reset/:resetLogin/:resetKey' />
     </Router>
   )
 }
